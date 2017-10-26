@@ -1,5 +1,6 @@
 package server;
 
+import java.net.URL;
 import java.time.Year;
 
 /**
@@ -12,20 +13,20 @@ public class Film {
 
     private final String title;
 
-    private final Year year;
+    private final Year release;
 
-    private final int duration;
+    private final int runtime;
 
-    private final String thumbURL;
+    private final URL thumb;
 
     private final Genres genres;
 
-    public Film(int id, String title, Year year, int duration, String thumbURL, Genres genres) {
+    public Film(int id, String title, Year release, int runtime, URL thumb, Genres genres) {
         this.id = id;
         this.title = title;
-        this.year = year;
-        this.duration = duration;
-        this.thumbURL = thumbURL;
+        this.release = release;
+        this.runtime = runtime;
+        this.thumb = thumb;
         this.genres = genres;
     }
 
@@ -37,16 +38,16 @@ public class Film {
         return title;
     }
 
-    public Year getYear() {
-        return year;
+    public Year getRelease() {
+        return release;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getRuntime() {
+        return runtime;
     }
 
-    public String getThumbURL() {
-        return thumbURL;
+    public URL getThumb() {
+        return thumb;
     }
 
     public Genres getGenres() {
@@ -57,9 +58,9 @@ public class Film {
     public String toString() {
         return "ID: " + id + "; " +
                 "Title: " + title + "; " +
-                "Year: " + year + "; " +
-                "Duration " + duration + " minutes; " +
-                "Thumb: + " + thumbURL + "; " +
+                "Year: " + release + "; " +
+                "Duration " + runtime + " minutes; " +
+                "Thumb: + " + thumb + "; " +
                 "Genre(s): " + genres + ";";
     }
 }

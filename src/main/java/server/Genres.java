@@ -1,10 +1,20 @@
 package server;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 /**
  *
  * @author josh.bridge
  */
 public class Genres {
+
+    private static final Map<Integer, String> ALL = Maps.newHashMap();
+
+    static {
+
+    }
 
     private final Genre[] values;
 
