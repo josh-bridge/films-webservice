@@ -1,6 +1,7 @@
 package server;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -10,8 +11,10 @@ public interface FilmInfo {
 
     void addFilm(Film film);
 
-    Collection<Film> listFilm();
+    List<Film> listFilm();
 
-    Collection<Film> searchFilm(String search);
+    List<Film> searchFilm(String search);
+
+    Optional<Film> getById(int id);
 
 }

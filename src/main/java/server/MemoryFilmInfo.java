@@ -1,15 +1,15 @@
 package server;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Year;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
 /**
  *
@@ -18,30 +18,28 @@ import com.google.common.collect.Maps;
 @Component
 public class MemoryFilmInfo implements FilmInfo {
 
-    private final Map<String, Film> films = Maps.newHashMap();
+    private final List<Film> films = Lists.newArrayList(new Film(43, "Pulp Fiction", Year.of(1994), 154));
 
     public void addFilm(Film film) {
-        films.put(film.getTitle(), film);
+        films.add(film);
     }
 
-    public Collection<Film> listFilm() {
-        try {
-            return Collections.singletonList(
-                    new Film(1,
-                             "Pulp Fiction",
-                             Year.of(1994),
-                             154,
-                             new URL("http://google.co.uk"),
-                             new Genres(Genre.ACTION)));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        return Collections.emptyList();
+    @Nullable
+    public List<Film> listFilm() {
+        return films;
     }
 
-    public Collection<Film> searchFilm(String search) {
-        return Collections.singletonList(films.get(search));
+    public List<Film> searchFilm(String search) {
+
+        return films.stream()
+                .filter((film) -> film.getTitle().equals(search))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<Film> getById(int id) {
+        return films.stream()
+                .filter((film) -> film.getId() == id)
+                .findFirst();
     }
 
 }
