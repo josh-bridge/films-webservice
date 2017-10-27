@@ -1,33 +1,34 @@
 package server;
 
-import java.time.Year;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
  *
  * @author josh.bridge
  */
+@JacksonXmlRootElement(localName = "film")
 public class Film {
 
     private final int id;
 
     private final String title;
 
-    private final Year release;
+    private final int year;
 
     private final int runtime;
 
 
-    public Film(int id, String title, Year release, int runtime) {
+    public Film(int id, String title, int year, int runtime) {
         this.id = id;
         this.title = title;
-        this.release = release;
+        this.year = year;
         this.runtime = runtime;
     }
 
     public Film() {
         this.id = 0;
         this.title = "";
-        this.release = Year.now();
+        this.year = 0;
         this.runtime = 0;
     }
 
@@ -39,8 +40,8 @@ public class Film {
         return title;
     }
 
-    public Year getRelease() {
-        return release;
+    public int getYear() {
+        return year;
     }
 
     public int getRuntime() {
@@ -51,7 +52,7 @@ public class Film {
     public String toString() {
         return "ID: " + id + "; " +
                 "Title: " + title + "; " +
-                "Year: " + release + "; " +
+                "Year: " + year + "; " +
                 "Duration " + runtime + " minutes;";
     }
 }

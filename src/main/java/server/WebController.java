@@ -1,13 +1,26 @@
 package server;
 
-import java.util.Optional;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.MediaType.APPLICATION_XML_UTF_8;
+import static com.google.common.net.MediaType.JSON_UTF_8;
+import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.common.net.MediaType;
 import com.google.gson.GsonBuilder;
+
+import server.result.Result;
 
 /**
  *
@@ -16,37 +29,84 @@ import com.google.gson.GsonBuilder;
 @RestController
 public class WebController {
 
+    private static final String TEXT = "text";
+
     private final FilmInfo filmInfo;
 
     private final GsonBuilder jsonBuilder;
 
-    private final ResultFactory resultFactory;
+    private final XmlMapper xmlMapper;
 
     @Autowired
-    public WebController(FilmInfo filmInfo, ResultFactory resultFactory) {
+    public WebController(FilmInfo filmInfo) {
         this.filmInfo = filmInfo;
         this.jsonBuilder = new GsonBuilder();
-        this.resultFactory = resultFactory;
+        this.xmlMapper = new XmlMapper();
     }
 
-    @RequestMapping("/details/{idParam}")
-    public String details(@PathVariable String idParam) {
-        final int id = Integer.parseInt(idParam);
+    @RequestMapping("/details/{id}")
+    public String details(@PathVariable int id, @RequestParam(name = "type", defaultValue = TEXT) String type, HttpServletResponse httpResponse) {
+        final Result<Film> result = getResult(id);
 
-        if (id >= 0) {
-            final Optional<Film> film = filmInfo.getById(id);
-
-            if (film.isPresent()) {
-                return jsonBuilder.create().toJson(resultFactory.create(film.get()));
-            }
-        }
-
-        return "Invalid id";
+        return createResponse(result, type, httpResponse);
     }
 
     @RequestMapping("/all")
-    public String all() {
-        return jsonBuilder.create().toJson(filmInfo.listFilm());
+    public String all(@RequestParam(name = "type", defaultValue = TEXT) String type, HttpServletResponse httpResponse) {
+        final Result<List<Film>> result = Result.from(filmInfo.listFilm());
+
+        return createResponse(result, type, httpResponse);
+    }
+
+    private <T extends Result> String createResponse(T result, String type, HttpServletResponse response) {
+        final MediaType contentType = getContentType(type);
+
+        response.setHeader(CONTENT_TYPE, contentType.toString());
+
+        String textresponse = "";
+        try {
+            textresponse = buildResponse(result, contentType);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return textresponse;
+    }
+
+    private MediaType getContentType(String type) {
+        if (JSON_UTF_8.subtype().equalsIgnoreCase(type)) {
+            return JSON_UTF_8;
+        }
+
+        if (APPLICATION_XML_UTF_8.subtype().equalsIgnoreCase(type)) {
+            return APPLICATION_XML_UTF_8;
+        }
+
+        return PLAIN_TEXT_UTF_8;
+    }
+
+    private <T> String buildResponse(T result, MediaType contentType) throws JsonProcessingException {
+        if (contentType.is(JSON_UTF_8)) {
+            return jsonBuilder.create().toJson(result);
+        }
+
+        if (contentType.is(APPLICATION_XML_UTF_8)) {
+            // final ObjectWriter writer = xmlMapper.writer();
+            // final SerializationConfig config = writer.getConfig();
+
+            return xmlMapper.writer().withRootName("result").writeValueAsString(result);
+        }
+        return result.toString();
+    }
+
+    private Result<Film> getResult(int id) {
+        if (id < 0) {
+            return Result.emptyResult();
+        }
+
+        return filmInfo.getById(id)
+                .map(Result::from)
+                .orElseGet(Result::emptyResult);
     }
 
 }

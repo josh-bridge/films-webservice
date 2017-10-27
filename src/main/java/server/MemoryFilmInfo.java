@@ -1,6 +1,5 @@
 package server;
 
-import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +17,9 @@ import com.google.common.collect.Lists;
 @Component
 public class MemoryFilmInfo implements FilmInfo {
 
-    private final List<Film> films = Lists.newArrayList(new Film(43, "Pulp Fiction", Year.of(1994), 154));
+    private final List<Film> films = Lists.newArrayList(
+            new Film(43, "Pulp Fiction", 1994, 154),
+            new Film(44, "Inception", 2010, 148));
 
     public void addFilm(Film film) {
         films.add(film);
