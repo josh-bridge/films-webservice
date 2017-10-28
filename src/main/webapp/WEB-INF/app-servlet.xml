@@ -22,4 +22,14 @@
         <property name = "suffix" value = ".jsp" />
     </bean>
 
+    <context:property-placeholder location="classpath:jdbc.properties" />
+
+    <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="1"/>
+    </bean>
+
 </beans>

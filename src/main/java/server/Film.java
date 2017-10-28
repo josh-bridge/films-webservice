@@ -1,6 +1,6 @@
 package server;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -16,23 +16,14 @@ public class Film {
 
     private final String director;
 
-    private final Collection<String> stars;
+    private final List<String> stars;
 
     private final String review;
 
-    public Film(int id, String title, int year, String director, Collection<String> stars, String review) {
+    public Film(int id, String title, int year, String director, List<String> stars, String review) {
         this.id = id;
         this.title = title;
         this.year = year;
-        this.director = director;
-        this.stars = stars;
-        this.review = review;
-    }
-
-    public Film(String director, Collection<String> stars, String review) {
-        this.id = 0;
-        this.title = "";
-        this.year = 0;
         this.director = director;
         this.stars = stars;
         this.review = review;
@@ -54,7 +45,7 @@ public class Film {
         return director;
     }
 
-    public Collection<String> getStars() {
+    public List<String> getStars() {
         return stars;
     }
 
@@ -64,9 +55,11 @@ public class Film {
 
     @Override
     public String toString() {
-        return "ID: " + id + "; " +
+        return "Id: " + id + "; " +
                 "Title: " + title + "; " +
                 "Year: " + year + "; " +
-                "Director " + director + " minutes;";
+                "Director " + director + "; " +
+                "Stars: " + String.join(", ", stars) + "; " +
+                "Review: \"" + review + "\";";
     }
 }
