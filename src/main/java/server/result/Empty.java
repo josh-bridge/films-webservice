@@ -24,4 +24,9 @@ public class Empty<T> extends Result<T> {
     public T getData() throws IllegalStateException {
         throw new IllegalStateException("ResultWrapper.getData() cannot be called on an empty value");
     }
+
+    @Override
+    public String toString() {
+        return "No data to show.";
+    }
 }

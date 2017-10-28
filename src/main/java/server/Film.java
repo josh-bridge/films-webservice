@@ -1,12 +1,11 @@
 package server;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import java.util.Collection;
 
 /**
  *
  * @author josh.bridge
  */
-@JacksonXmlRootElement(localName = "film")
 public class Film {
 
     private final int id;
@@ -15,21 +14,28 @@ public class Film {
 
     private final int year;
 
-    private final int runtime;
+    private final String director;
 
+    private final Collection<String> stars;
 
-    public Film(int id, String title, int year, int runtime) {
+    private final String review;
+
+    public Film(int id, String title, int year, String director, Collection<String> stars, String review) {
         this.id = id;
         this.title = title;
         this.year = year;
-        this.runtime = runtime;
+        this.director = director;
+        this.stars = stars;
+        this.review = review;
     }
 
-    public Film() {
+    public Film(String director, Collection<String> stars, String review) {
         this.id = 0;
         this.title = "";
         this.year = 0;
-        this.runtime = 0;
+        this.director = director;
+        this.stars = stars;
+        this.review = review;
     }
 
     public int getId() {
@@ -44,8 +50,16 @@ public class Film {
         return year;
     }
 
-    public int getRuntime() {
-        return runtime;
+    public String getDirector() {
+        return director;
+    }
+
+    public Collection<String> getStars() {
+        return stars;
+    }
+
+    public String getReview() {
+        return review;
     }
 
     @Override
@@ -53,6 +67,6 @@ public class Film {
         return "ID: " + id + "; " +
                 "Title: " + title + "; " +
                 "Year: " + year + "; " +
-                "Duration " + runtime + " minutes;";
+                "Director " + director + " minutes;";
     }
 }

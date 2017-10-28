@@ -1,10 +1,9 @@
 package server;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import org.springframework.stereotype.Component;
 
@@ -18,14 +17,13 @@ import com.google.common.collect.Lists;
 public class MemoryFilmInfo implements FilmInfo {
 
     private final List<Film> films = Lists.newArrayList(
-            new Film(43, "Pulp Fiction", 1994, 154),
-            new Film(44, "Inception", 2010, 148));
+            new Film(43, "Pulp Fiction", 1994, "Quentin Tarantino", Collections.emptyList(), "is gd"),
+            new Film(44, "Inception", 2010, "Christopher Nolan", Collections.emptyList(), "is gd lol"));
 
     public void addFilm(Film film) {
         films.add(film);
     }
 
-    @Nullable
     public List<Film> listFilm() {
         return films;
     }

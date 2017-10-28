@@ -25,4 +25,9 @@ public class Data<T> extends Result {
         return data;
     }
 
+    @Override
+    public String toString() {
+        return data.toString();
+    }
+
 }
