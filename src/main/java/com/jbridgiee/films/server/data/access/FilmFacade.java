@@ -55,6 +55,10 @@ public class FilmFacade implements FilmInfo {
 
     @Override
     public Result<Film> getById(int id) {
+        return (id > 10000) ? getFilmResult(id) : Result.emptyResult();
+    }
+
+    private Result<Film> getFilmResult(int id) {
         return filmDAO.getById(id).map(Result::from).orElseGet(Result::emptyResult);
     }
 
