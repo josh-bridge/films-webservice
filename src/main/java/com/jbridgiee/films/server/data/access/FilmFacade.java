@@ -4,7 +4,6 @@ import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -60,7 +59,11 @@ public class FilmFacade implements FilmInfo {
     }
 
     private List<Film> removeDuplicates(List<Film> films) {
-        return films.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(Film::getId))), ArrayList::new));
+        return films.stream().collect(collectingAndThen(toCollection(this::getUniqueFilms), Lists::newArrayList));
+    }
+
+    private TreeSet<Film> getUniqueFilms() {
+        return new TreeSet<>(comparingInt(Film::getId));
     }
 
 }
