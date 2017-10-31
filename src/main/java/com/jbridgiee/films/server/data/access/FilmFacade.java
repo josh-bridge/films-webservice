@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.jbridgiee.films.server.aop.LogResponseTime;
 import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.access.dao.DAO;
 import com.jbridgiee.films.server.data.result.Result;
@@ -32,6 +33,7 @@ public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
     }
 
     @Override
+    @LogResponseTime
     public Result<Film> addFilm(Film film) {
         try {
             filmDAO.create(film);
@@ -44,11 +46,13 @@ public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
     }
 
     @Override
+    @LogResponseTime
     public Result<List<Film>> listFilm() {
         return Result.fromList(filmDAO.getAll());
     }
 
     @Override
+    @LogResponseTime
     public Result<List<Film>> searchFilm(String searchTerm) {
         final List<Search<?>> searches = FilmSearchFactory.searchAll(searchTerm);
 
@@ -61,6 +65,7 @@ public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
     }
 
     @Override
+    @LogResponseTime
     public Result<Film> getById(int id) {
         return filmDAO.getById(id).map(Result::from).orElseGet(Result::emptyResult);
     }
