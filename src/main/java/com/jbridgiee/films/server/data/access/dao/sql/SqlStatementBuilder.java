@@ -1,4 +1,4 @@
-package com.jbridgiee.films.server.data.sql;
+package com.jbridgiee.films.server.data.access.dao.sql;
 
 /**
  *

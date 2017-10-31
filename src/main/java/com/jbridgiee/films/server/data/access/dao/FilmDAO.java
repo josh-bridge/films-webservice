@@ -1,6 +1,6 @@
-package com.jbridgiee.films.server.data;
+package com.jbridgiee.films.server.data.access.dao;
 
-import static com.jbridgiee.films.server.data.sql.SqlStatementBuilder.sqlStatement;
+import static com.jbridgiee.films.server.data.access.dao.sql.SqlStatementBuilder.sqlStatement;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import com.jbridgiee.films.server.Film;
+import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.search.Search;
 
 /**

@@ -1,4 +1,4 @@
-package com.jbridgiee.films.server;
+package com.jbridgiee.films.server.data;
 
 import java.util.List;
 

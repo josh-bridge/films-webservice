@@ -1,4 +1,4 @@
-package com.jbridgiee.films.server.web;
+package com.jbridgiee.films.server.controller;
 
 import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
 
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jbridgiee.films.server.data.FilmInfo;
-import com.jbridgiee.films.server.result.Result;
+import com.jbridgiee.films.server.data.access.FilmInfo;
+import com.jbridgiee.films.server.data.result.Result;
 
 /**
  *

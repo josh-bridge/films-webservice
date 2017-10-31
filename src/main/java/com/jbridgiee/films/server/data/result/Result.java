@@ -1,4 +1,6 @@
-package com.jbridgiee.films.server.result;
+package com.jbridgiee.films.server.data.result;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -11,6 +13,10 @@ public abstract class Result<T> {
     @SuppressWarnings("unchecked")
     public static <T> Result<T> from(T data) {
         return new Data<>(data);
+    }
+
+    public static <T> Result<List<T>> fromList(List<T> data) {
+        return data.isEmpty() ? emptyResult() : from(data);
     }
 
     public static <T> Result<T> emptyResult() {

@@ -1,4 +1,4 @@
-package com.jbridgiee.films.server.data;
+package com.jbridgiee.films.server.data.access.dao;
 
 import java.util.List;
 import java.util.Optional;
