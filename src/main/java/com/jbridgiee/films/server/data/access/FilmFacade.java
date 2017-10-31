@@ -24,6 +24,8 @@ import com.jbridgiee.films.server.data.search.Search;
 @Component
 public class FilmFacade implements FilmInfo {
 
+    private static final int FIRST_FILM_ID = 10000;
+
     private final FilmDAO filmDAO;
 
     @Autowired
@@ -55,10 +57,10 @@ public class FilmFacade implements FilmInfo {
 
     @Override
     public Result<Film> getById(int id) {
-        return (id > 10000) ? getFilmResult(id) : Result.emptyResult();
+        return (id > FIRST_FILM_ID) ? getFilm(id) : Result.emptyResult();
     }
 
-    private Result<Film> getFilmResult(int id) {
+    private Result<Film> getFilm(int id) {
         return filmDAO.getById(id).map(Result::from).orElseGet(Result::emptyResult);
     }
 
