@@ -1,4 +1,4 @@
-package server.web;
+package com.jbridgiee.films.server.web;
 
 import static com.google.common.net.MediaType.JSON_UTF_8;
 
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.GsonBuilder;
 
-import server.data.FilmInfo;
-import server.result.Result;
+import com.jbridgiee.films.server.data.FilmInfo;
+import com.jbridgiee.films.server.result.Result;
 
 /**
  *

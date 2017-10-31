@@ -1,18 +1,22 @@
-package server.web;
+package com.jbridgiee.films.server.web;
 
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.net.MediaType;
-
-import server.Film;
-import server.data.FilmInfo;
-import server.result.Result;
+import com.jbridgiee.films.server.Film;
+import com.jbridgiee.films.server.data.FilmInfo;
+import com.jbridgiee.films.server.result.Result;
 
 public abstract class FilmController {
 
@@ -26,7 +30,7 @@ public abstract class FilmController {
     }
 
     @RequestMapping("/details/{id}")
-    public String details(int id, HttpServletResponse httpResponse) {
+    public String details(@PathVariable int id, HttpServletResponse httpResponse) {
         setHeader(httpResponse);
 
         return createResponse(getResult(id));
@@ -36,7 +40,14 @@ public abstract class FilmController {
     public String all(HttpServletResponse httpResponse) {
         setHeader(httpResponse);
 
-        return createResponse(getAllResults());
+        return createResponse(getResult(filmProvider.listFilm()));
+    }
+
+    @RequestMapping("/search/{term}")
+    public String search(@PathVariable String term, HttpServletResponse httpResponse) {
+        setHeader(httpResponse);
+
+        return createResponse(getResult(searchFilms(term)));
     }
 
     abstract <R extends Result> String createResponse(R result);
@@ -45,14 +56,22 @@ public abstract class FilmController {
         response.setHeader(CONTENT_TYPE, contentType.toString());
     }
 
-    private Result<?> getResult(int id) {
-        return (id > 10000) ? filmProvider.getById(id).map(Result::from).orElseGet(Result::emptyResult)
-                 : Result.emptyResult();
+    private List<Film> searchFilms(String term) {
+        try {
+            return filmProvider.searchFilm(URLDecoder.decode(term, UTF_8));
+        } catch (final UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyList();
     }
 
-    private Result<?> getAllResults() {
-        final List<Film> films = filmProvider.listFilm();
+    private Result<?> getResult(int id) {
+        return (id > 10000) ? filmProvider.getById(id).map(Result::from).orElseGet(Result::emptyResult)
+                : Result.emptyResult();
+    }
 
+    private Result<?> getResult(List<Film> films) {
         return (!films.isEmpty()) ? Result.from(films) : Result.emptyResult();
     }
 

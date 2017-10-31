@@ -1,6 +1,8 @@
-package server;
+package com.jbridgiee.films.server;
 
 import java.util.List;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
  *
@@ -18,15 +20,15 @@ public class Film {
 
     private final List<String> stars;
 
-    private final String review;
+    private final String description;
 
-    public Film(int id, String title, int year, String director, List<String> stars, String review) {
+    public Film(int id, String title, int year, String director, List<String> stars, String description) {
         this.id = id;
         this.title = title;
         this.year = year;
         this.director = director;
         this.stars = stars;
-        this.review = review;
+        this.description = description;
     }
 
     public int getId() {
@@ -49,17 +51,21 @@ public class Film {
         return stars;
     }
 
-    public String getReview() {
-        return review;
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public String toString() {
-        return "Id: " + id + "; " +
+        return "Film [Id: " + id + "; " +
                 "Title: " + title + "; " +
                 "Year: " + year + "; " +
-                "Director " + director + "; " +
+                "Director: " + director + "; " +
                 "Stars: " + String.join(", ", stars) + "; " +
-                "Review: \"" + review + "\";";
+                "Description: \"" + description + "\";]";
+    }
+
+    public static boolean equals(Film film, Film film2) {
+        return film != null && film2 != null && EqualsBuilder.reflectionEquals(film, film2);
     }
 }

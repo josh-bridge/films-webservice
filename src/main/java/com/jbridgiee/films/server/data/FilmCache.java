@@ -1,4 +1,4 @@
-package server.data;
+package com.jbridgiee.films.server.data;
 
 /**
  *

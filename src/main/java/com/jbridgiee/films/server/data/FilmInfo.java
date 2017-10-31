@@ -1,9 +1,9 @@
-package server.data;
+package com.jbridgiee.films.server.data;
 
 import java.util.List;
 import java.util.Optional;
 
-import server.Film;
+import com.jbridgiee.films.server.Film;
 
 /**
  *
@@ -15,7 +15,7 @@ public interface FilmInfo {
 
     List<Film> listFilm();
 
-    List<Film> searchFilm(String search);
+    List<Film> searchFilm(String searchTerm);
 
     Optional<Film> getById(int id);
 

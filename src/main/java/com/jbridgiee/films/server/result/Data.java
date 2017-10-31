@@ -1,4 +1,4 @@
-package server.result;
+package com.jbridgiee.films.server.result;
 
 /**
  *
@@ -6,18 +6,11 @@ package server.result;
  */
 public class Data<T> extends Result {
 
-    private final boolean success = true;
-
-    // @JacksonXmlProperty(localName = "film")
     private final T data;
 
     public Data(T data) {
+        super(true);
         this.data = data;
-    }
-
-    @Override
-    public boolean isSuccess() {
-        return success;
     }
 
     @Override

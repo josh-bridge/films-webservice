@@ -1,4 +1,4 @@
-package server.web;
+package com.jbridgiee.films.server.web;
 
 import static com.google.common.net.MediaType.APPLICATION_XML_UTF_8;
 
@@ -10,8 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import server.data.FilmInfo;
-import server.result.Result;
+import com.jbridgiee.films.server.data.FilmInfo;
+import com.jbridgiee.films.server.result.Result;
 
 /**
  *
