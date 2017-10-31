@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.jbridgiee.films.server.aop.LogResponseTime;
+import com.jbridgiee.films.server.aop.annotations.LogResponseTime;
 import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.access.dao.DAO;
 import com.jbridgiee.films.server.data.result.Result;
