@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.net.MediaType;
+import com.jbridgiee.films.server.aop.annotations.AutoContentType;
+import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.access.FilmInfo;
 import com.jbridgiee.films.server.data.result.Result;
 

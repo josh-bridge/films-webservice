@@ -10,6 +10,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import com.jbridgiee.films.server.aop.AopHandler;
 
 /**
+ * Prints to standard output the execution time of the method.
+ *
  * Connects to {@link AopHandler#printResponseTime(ProceedingJoinPoint)}
  *
  * @author josh.bridge
