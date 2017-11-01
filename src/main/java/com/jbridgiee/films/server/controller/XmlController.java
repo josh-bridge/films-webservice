@@ -25,7 +25,7 @@ public class XmlController extends FilmController {
 
     @Autowired
     public XmlController(FilmInfo filmProvider) {
-        super(filmProvider, APPLICATION_XML_UTF_8);
+        super(APPLICATION_XML_UTF_8, filmProvider);
         this.xmlMapper = new XmlMapper();
     }
 

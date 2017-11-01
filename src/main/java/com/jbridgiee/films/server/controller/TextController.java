@@ -19,7 +19,7 @@ public class TextController extends FilmController {
 
     @Autowired
     public TextController(FilmInfo filmProvider) {
-        super(filmProvider, PLAIN_TEXT_UTF_8);
+        super(PLAIN_TEXT_UTF_8, filmProvider);
     }
 
     @Override

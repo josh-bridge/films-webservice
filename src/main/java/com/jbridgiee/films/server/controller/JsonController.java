@@ -23,7 +23,7 @@ public class JsonController extends FilmController {
 
     @Autowired
     public JsonController(FilmInfo filmProvider) {
-        super(filmProvider, JSON_UTF_8);
+        super(JSON_UTF_8, filmProvider);
         this.jsonBuilder = new GsonBuilder();
     }
 
