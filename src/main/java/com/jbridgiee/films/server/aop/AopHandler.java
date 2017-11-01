@@ -4,13 +4,14 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-import com.google.common.net.MediaType;
-import com.jbridgiee.films.server.controller.FilmController;
+import com.jbridgiee.films.server.controller.Controller;
 
 /**
  *
@@ -19,6 +20,18 @@ import com.jbridgiee.films.server.controller.FilmController;
 @Aspect
 @Component
 public class AopHandler {
+
+    private static final String REQUEST_MAPPING = "org.springframework.web.bind.annotation.RequestMapping";
+
+    private static final String REQUEST_MAPPING_ANNOTATION = "annotation(" + REQUEST_MAPPING + ")";
+
+    private static final String AUTO_CONTENT_TYPE = "com.jbridgiee.films.server.aop.annotations.AutoContentType";
+
+    private static final String AUTO_CONTENT_TYPE_ANNOTATION = "annotation(" + AUTO_CONTENT_TYPE + ")";
+
+    private static final String HTTP_RESPONSE = "javax.servlet.http.HttpServletResponse";
+
+    private static final String HTTP_RESPONSE_PARAM = "execution(* com.jbridgiee.films.server.controller.FilmController.*(.., " + HTTP_RESPONSE + ", ..))";
 
     @Around("@annotation(com.jbridgiee.films.server.aop.annotations.LogResponseTime)")
     public Object printResponseTime(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -31,38 +44,16 @@ public class AopHandler {
         return returnedValue;
     }
 
-    // @Around("@annotation(com.jbridgiee.films.server.aop.annotations.AutoContentType)")
-    // public Object setHeader(ProceedingJoinPoint pjp) throws Throwable {
-    //     // final MediaType contentType = ((FilmController) pjp.getTarget()).getContentType();
-    //     //
-    //     // final Optional<Object> httpResponse = getHttpResponse(pjp.getArgs());
-    //     //
-    //     // if (httpResponse.isPresent()) {
-    //     //     final HttpServletResponse httpServletResponse = (HttpServletResponse) httpResponse.get();
-    //     //     httpServletResponse.setHeader(CONTENT_TYPE, contentType.toString());
-    //     // }
-    //
-    //     return pjp.proceed(pjp.getArgs());
-    // }
+    @Before("@" + AUTO_CONTENT_TYPE_ANNOTATION + " && @" + REQUEST_MAPPING_ANNOTATION + " && " + HTTP_RESPONSE_PARAM + " && args(response)")
+    public void setHeader(JoinPoint joinPoint, HttpServletResponse response) throws Throwable {
+        final Object target = joinPoint.getTarget();
 
-    @Around("@annotation(com.jbridgiee.films.server.aop.annotations.AServlet) && args(response)")
-    public Object setHeader(ProceedingJoinPoint joinPoint, HttpServletResponse response) throws Throwable {
-        response.setHeader(CONTENT_TYPE, getContentType(joinPoint).toString());
+        if (target instanceof Controller) {
+            ((Controller) target).setHeader(response);
+        }
 
-        return runMethod(joinPoint);
+        System.out.println("Set content-type: " + response.getHeader(CONTENT_TYPE));
     }
-
-    private MediaType getContentType(ProceedingJoinPoint joinPoint) {
-        return ((FilmController) joinPoint.getTarget()).getContentType();
-    }
-
-    // private Annotation[][] getParams(ProceedingJoinPoint joinPoint) {
-    //     return ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterAnnotations();
-    // }
-    //
-    // private Optional<Object> getHttpResponse(Object[] args) {
-    //     return Arrays.stream(args).filter(SERVLET_RESPONSE).findFirst();
-    // }
 
     private Object runMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         return joinPoint.proceed(joinPoint.getArgs());

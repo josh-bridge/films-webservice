@@ -23,12 +23,6 @@ public abstract class Controller {
         this.contentType = contentType;
     }
 
-    <R extends Result> String completeRequest(HttpServletResponse response, R result) {
-        setHeader(response);
-
-        return createResponse(result);
-    }
-
     abstract <R extends Result> String createResponse(R result);
 
     String sanitise(String input) {
