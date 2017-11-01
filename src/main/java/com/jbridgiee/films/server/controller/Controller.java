@@ -25,15 +25,15 @@ public abstract class Controller {
 
     abstract <R extends Result> String createResponse(R result);
 
+    void setHeader(HttpServletResponse response) {
+        response.setHeader(CONTENT_TYPE, contentType.toString());
+    }
+
     String sanitise(String input) {
         try {
             return URLDecoder.decode(input, UTF_8).trim();
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException("Unable to decode input", e);
         }
-    }
-
-    private void setHeader(HttpServletResponse response) {
-        response.setHeader(CONTENT_TYPE, contentType.toString());
     }
 }

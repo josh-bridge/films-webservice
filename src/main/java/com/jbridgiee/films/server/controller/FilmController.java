@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.net.MediaType;
-import com.jbridgiee.films.server.aop.annotations.AutoContentType;
 import com.jbridgiee.films.server.data.access.FilmInfo;
 
 public abstract class FilmController extends Controller {
@@ -18,21 +17,18 @@ public abstract class FilmController extends Controller {
         this.filmProvider = filmProvider;
     }
 
-    @AutoContentType
     @RequestMapping("/details/{id}")
-    public String details(HttpServletResponse httpResponse, @PathVariable int id) {
+    public String details(@AutoContentType HttpServletResponse httpResponse, @PathVariable int id) {
         return createResponse(filmProvider.getById(id));
     }
 
-    @AutoContentType
     @RequestMapping("/all")
-    public String all(HttpServletResponse httpResponse) {
+    public String all(@AutoContentType HttpServletResponse httpResponse) {
         return createResponse(filmProvider.listFilm());
     }
 
-    @AutoContentType
     @RequestMapping("/search/{term}")
-    public String search(HttpServletResponse httpResponse, @PathVariable String term) {
+    public String search(@AutoContentType HttpServletResponse httpResponse, @PathVariable String term) {
         return createResponse(filmProvider.searchFilm(sanitise(term)));
     }
 

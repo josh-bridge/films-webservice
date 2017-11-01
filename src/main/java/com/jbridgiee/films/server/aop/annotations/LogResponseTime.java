@@ -7,12 +7,12 @@ import java.lang.annotation.Target;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 
-import com.jbridgiee.films.server.aop.AopHandler;
+import com.jbridgiee.films.server.aop.LoggerHandler;
 
 /**
  * Prints to standard output the execution time of the method.
  *
- * Connects to {@link AopHandler#printResponseTime(ProceedingJoinPoint)}
+ * Connects to {@link LoggerHandler#printResponseTime(ProceedingJoinPoint)}
  *
  * @author josh.bridge
  */
