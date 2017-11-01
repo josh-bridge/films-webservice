@@ -15,12 +15,12 @@ public abstract class Result<T> {
         return new Data<>(data);
     }
 
-    public static <T> Result<List<T>> fromList(List<T> data) {
-        return data.isEmpty() ? emptyResult() : from(data);
-    }
-
     public static <T> Result<T> emptyResult() {
         return Empty.result();
+    }
+
+    public static <T> Result<List<T>> fromList(List<T> data) {
+        return data == null || data.isEmpty() ? emptyResult() : from(data);
     }
 
     private final boolean success;

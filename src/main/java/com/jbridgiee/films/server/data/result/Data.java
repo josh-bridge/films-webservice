@@ -8,7 +8,7 @@ public class Data<T> extends Result {
 
     private final T data;
 
-    public Data(T data) {
+    Data(T data) {
         super(true);
         this.data = data;
     }
@@ -20,7 +20,7 @@ public class Data<T> extends Result {
 
     @Override
     public String toString() {
-        return data.toString();
+        return "Data: " + data.toString() + ";";
     }
 
 }

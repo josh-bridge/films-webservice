@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.jbridgiee.films.server.data.Film;
-import com.jbridgiee.films.server.data.access.dao.FilmDAO;
+import com.jbridgiee.films.server.data.access.dao.DAO;
 import com.jbridgiee.films.server.data.result.Result;
 import com.jbridgiee.films.server.data.search.FilmSearchFactory;
 import com.jbridgiee.films.server.data.search.Search;
@@ -22,20 +22,25 @@ import com.jbridgiee.films.server.data.search.Search;
  * @author josh.bridge
  */
 @Component
-public class FilmFacade implements FilmInfo {
+public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
 
-    private static final int FIRST_FILM_ID = 10000;
-
-    private final FilmDAO filmDAO;
+    private final T filmDAO;
 
     @Autowired
-    public FilmFacade(FilmDAO filmDAO) {
+    public FilmFacade(T filmDAO) {
         this.filmDAO = filmDAO;
     }
 
     @Override
-    public void addFilm(Film film) {
+    public Result<Film> addFilm(Film film) {
+        try {
+            filmDAO.create(film);
+            return Result.from(film);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
 
+        return Result.emptyResult();
     }
 
     @Override
@@ -57,10 +62,6 @@ public class FilmFacade implements FilmInfo {
 
     @Override
     public Result<Film> getById(int id) {
-        return (id > FIRST_FILM_ID) ? getFilm(id) : Result.emptyResult();
-    }
-
-    private Result<Film> getFilm(int id) {
         return filmDAO.getById(id).map(Result::from).orElseGet(Result::emptyResult);
     }
 

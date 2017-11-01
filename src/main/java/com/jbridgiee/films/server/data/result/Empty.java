@@ -8,13 +8,13 @@ public class Empty<T> extends Result<T> {
 
     private static final Empty<Object> INSTANCE = new Empty<>();
 
-    public Empty() {
-        super(false);
+    @SuppressWarnings("unchecked")
+    static <T> Result<T> result() {
+        return (Result<T>) INSTANCE;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Result<T> result() {
-        return (Result<T>) INSTANCE;
+    private Empty() {
+        super(false);
     }
 
     @Override
@@ -24,6 +24,6 @@ public class Empty<T> extends Result<T> {
 
     @Override
     public String toString() {
-        return "No data to show.";
+        return "No data.";
     }
 }

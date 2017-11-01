@@ -19,8 +19,6 @@ public interface DAO<T> {
 
     List<T> getAll();
 
-    Optional<T> searchItem(Search<?> search);
-
     List<T> searchItems(Search<?> search);
 
     boolean delete(T item);

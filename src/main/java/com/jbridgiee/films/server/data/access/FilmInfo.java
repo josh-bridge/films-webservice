@@ -11,7 +11,7 @@ import com.jbridgiee.films.server.data.result.Result;
  */
 public interface FilmInfo {
 
-    void addFilm(Film film);
+    Result<Film> addFilm(Film film);
 
     Result<List<Film>> listFilm();
 
