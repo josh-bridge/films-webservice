@@ -13,7 +13,6 @@ public class Data<T> extends Result {
         this.data = data;
     }
 
-    @Override
     public T getData() {
         return data;
     }

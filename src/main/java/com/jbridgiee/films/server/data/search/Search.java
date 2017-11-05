@@ -1,26 +1,32 @@
 package com.jbridgiee.films.server.data.search;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author josh.bridge
  */
-public class Search<T> {
+public class Search {
 
-    private final T term;
+    private final String term;
 
-    private final String field;
+    private final List<String> fields;
 
-    Search(T term, String field) {
+    Search(String term, List<String> fields) {
         this.term = term;
-        this.field = field;
+        this.fields = fields;
     }
 
-    public T getTerm() {
+    Search(String term, String... fields) {
+        this(term, Arrays.asList(fields));
+    }
+
+    public String getTerm() {
         return term;
     }
 
-    public String getField() {
-        return field;
+    public List<String> getFields() {
+        return fields;
     }
-
 }

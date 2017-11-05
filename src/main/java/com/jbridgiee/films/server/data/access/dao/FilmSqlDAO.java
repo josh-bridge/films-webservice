@@ -4,10 +4,10 @@ import static com.jbridgiee.films.server.data.access.dao.sql.SqlStatement.sql;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.NotImplementedException;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.access.dao.sql.SqlStatement;
 import com.jbridgiee.films.server.data.search.Search;
@@ -29,19 +30,21 @@ public class FilmSqlDAO extends SqlDAO<Film> {
 
     private static final int LOWEST_FILM_ID = 10000;
 
-    private static final String FILMS = "films";
+    public static final String ID = "id";
 
-    private static final String ID = "id";
+    public static final String FILMS = "films";
 
-    private static final String TITLE = "title";
+    public static final String TITLE = "title";
 
-    private static final String YEAR = "year";
+    public static final String YEAR = "year";
 
-    private static final String DIRECTOR = "director";
+    public static final String DIRECTOR = "director";
 
-    private static final String STARS = "stars";
+    public static final String STARS = "stars";
 
-    private static final String REVIEW = "review";
+    public static final String REVIEW = "review";
+
+    public static final String[] COLUMNS = new String[] { ID, TITLE, YEAR, DIRECTOR, STARS, REVIEW };
 
     private static final String VALUE = "?";
 
@@ -56,12 +59,12 @@ public class FilmSqlDAO extends SqlDAO<Film> {
 
     @Override
     public boolean create(Film item) {
-        throw new NotImplementedException(this.getClass().getName() + ".create(film) has not been implemented");
+        throw new NotImplementedException("create(film) has not been implemented");
     }
 
     @Override
     public boolean update(Film item) {
-        throw new NotImplementedException(this.getClass().getName() + ".update(film) has not been implemented");
+        throw new NotImplementedException("update(film) has not been implemented");
     }
 
     @Override
@@ -70,15 +73,13 @@ public class FilmSqlDAO extends SqlDAO<Film> {
     }
 
     @Override
-    public List<Film> getAll() {
-        final List<Film> films = getItems(GET_ALL_FILMS, getFilmRowMapper());
-
-        return films == null ? Collections.emptyList() : films;
+    public Stream<Film> getAll() {
+        return getItems(GET_ALL_FILMS, getFilmRowMapper());
     }
 
     @Override
-    public List<Film> searchItems(Search<?> search) {
-        return getItems(searchByField(search.getField()), getFilmRowMapper(), getSearchTerm(search));
+    public Stream<Film> searchItems(Search search) {
+        return getItems(searchByFields(search.getFields()), getFilmRowMapper(), getSearchTerms(search));
     }
 
     @Override
@@ -90,8 +91,34 @@ public class FilmSqlDAO extends SqlDAO<Film> {
         return sql().selectAll().from(FILMS).where(field).like(VALUE);
     }
 
-    private String getSearchTerm(Search<?> search) {
-        return "%" + search.getTerm().toString().trim() + "%";
+    private SqlStatement searchByFields(List<String> fields) {
+        final SqlStatement statement = sql().selectAll().from(FILMS);
+
+        for (int i = 0; i < fields.size(); i++) {
+            final String field = fields.get(i);
+
+            if (i == 0) {
+                statement.where(field).like(VALUE);
+            } else {
+                statement.or(field).like(VALUE);
+            }
+        }
+
+        return statement.groupBy(ID);
+    }
+
+    private String getSearchTerm(Search search) {
+        return "%" + search.getTerm().trim() + "%";
+    }
+
+    private Object[] getSearchTerms(Search search) {
+        final List<String> terms = Lists.newArrayList();
+
+        for (int i = 0; i < search.getFields().size(); i++) {
+            terms.add(getSearchTerm(search));
+        }
+
+        return terms.toArray(new Object[terms.size()]);
     }
 
     private RowMapper<Film> getFilmRowMapper() {

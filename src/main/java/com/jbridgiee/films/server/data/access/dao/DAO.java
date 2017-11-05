@@ -1,7 +1,7 @@
 package com.jbridgiee.films.server.data.access.dao;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.jbridgiee.films.server.data.search.Search;
 
@@ -11,16 +11,16 @@ import com.jbridgiee.films.server.data.search.Search;
  */
 public interface DAO<T> {
 
-    boolean create(T item);
+    Stream<T> getAll() throws Exception;
 
-    boolean update(T item);
+    Optional<T> getById(int id) throws Exception;
 
-    Optional<T> getById(int id);
+    boolean create(T item) throws Exception;
 
-    List<T> getAll();
+    boolean update(T item) throws Exception;
 
-    List<T> searchItems(Search<?> search);
+    boolean delete(T item) throws Exception;
 
-    boolean delete(T item);
+    Stream<T> searchItems(Search search) throws Exception;
 
 }

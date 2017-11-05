@@ -1,9 +1,5 @@
 package com.jbridgiee.films.server.data.search;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 /**
  *
  * @author josh.bridge
@@ -18,35 +14,28 @@ public class FilmSearchFactory {
 
     private static final String STARS = "stars";
 
-    public static Search<String> searchTitle(String title) {
-        return new Search<>(title.toUpperCase(), TITLE);
+    public static Search searchField(String field, String value) {
+        return new Search(value, field);
     }
 
-    public static Search<Integer> searchYear(int year) {
-        return new Search<>(year, YEAR);
+    public static Search searchTitle(String title) {
+        return new Search(title.toUpperCase(), TITLE);
     }
 
-    public static Search<String> searchDirector(String director) {
-        return new Search<>(director.toUpperCase(), DIRECTOR);
+    public static Search searchYear(int year) {
+        return new Search(Integer.toString(year), YEAR);
     }
 
-    public static Search<String> searchStar(String star) {
-        return new Search<>(star.toUpperCase(), STARS);
+    public static Search searchDirector(String director) {
+        return new Search(director.toUpperCase(), DIRECTOR);
     }
 
-    public static List<Search<?>> searchAll(String search) {
-        final List<Search<?>> searches = Lists.newArrayList();
+    public static Search searchStar(String star) {
+        return new Search(star.toUpperCase(), STARS);
+    }
 
-        searches.add(searchTitle(search));
-
-        try {
-            searches.add(searchYear(Integer.parseInt(search)));
-        } catch (final NumberFormatException ignored) {}
-
-        searches.add(searchDirector(search));
-        searches.add(searchStar(search));
-
-        return searches;
+    public static Search searchAll(String search, String... columns) {
+        return new Search(search, columns);
     }
 
 }

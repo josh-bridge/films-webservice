@@ -26,6 +26,11 @@ public class SqlStatement {
         return this;
     }
 
+    public SqlStatement distinct(String field) {
+        sql.append("(DISTINCT ").append(field).append(") ");
+        return this;
+    }
+
     public SqlStatement from(String table) {
         sql.append("FROM ").append(table).append(" ");
         return this;
@@ -36,18 +41,28 @@ public class SqlStatement {
         return this;
     }
 
+    public SqlStatement or(String field) {
+        sql.append("OR ").append(field).append(" ");
+        return this;
+    }
+
     public SqlStatement eq(Object value) {
-        sql.append("= ").append(value.toString());
+        sql.append("= ").append(value.toString()).append(" ");
         return this;
     }
 
     public SqlStatement like(String value) {
-        sql.append(" ").append("LIKE ").append(value);
+        sql.append("LIKE ").append(value).append(" ");
         return this;
     }
 
     public SqlStatement limit(String value) {
-        sql.append(" ").append("LIMIT ").append(value);
+        sql.append("LIMIT ").append(value).append(" ");
+        return this;
+    }
+
+    public SqlStatement groupBy(String field) {
+        sql.append("GROUP BY ").append(field).append(" ");
         return this;
     }
 
@@ -56,6 +71,6 @@ public class SqlStatement {
     }
 
     public String build() {
-        return sql.toString();
+        return sql.toString().trim();
     }
 }

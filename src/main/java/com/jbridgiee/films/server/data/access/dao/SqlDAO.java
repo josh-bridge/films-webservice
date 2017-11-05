@@ -1,6 +1,6 @@
 package com.jbridgiee.films.server.data.access.dao;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -23,9 +23,8 @@ public abstract class SqlDAO<T> implements DAO<T> {
         return getTemplate().queryForObject(sql.build(), args, rowMapper);
     }
 
-    @Nullable
-    List<T> getItems(SqlStatement sql, RowMapper<T> rowMapper, Object... args) {
-        return getTemplate().query(sql.build(), args, rowMapper);
+    Stream<T> getItems(SqlStatement sql, RowMapper<T> rowMapper, Object... args) {
+        return getTemplate().query(sql.build(), args, rowMapper).stream();
     }
 
     private JdbcTemplate getTemplate() {

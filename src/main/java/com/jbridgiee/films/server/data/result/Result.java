@@ -2,25 +2,34 @@ package com.jbridgiee.films.server.data.result;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 /**
  *
  * @author josh.bridge
  */
-public abstract class Result<T> {
+public abstract class Result {
 
-    @SuppressWarnings("unchecked")
-    public static <T> Result<T> from(T data) {
-        return new Data<>(data);
-    }
-
-    public static <T> Result<T> emptyResult() {
+    public static Result emptyResult() {
         return Empty.result();
     }
 
-    public static <T> Result<List<T>> fromList(List<T> data) {
-        return data == null || data.isEmpty() ? emptyResult() : from(data);
+    public static <T> Result fromData(T data) {
+        return new Data<>(data);
+    }
+
+    public static <T> Result fromDataList(List<T> data) {
+        return data == null || data.isEmpty() ? emptyResult() : fromData(data);
+    }
+
+    public static <T> Result fromUpdate(T info) {
+        return new Updated<>(info);
+    }
+
+    public static <T extends Exception> Result fromError(String message, T error) {
+        return new Error<>(message, error);
+    }
+
+    public static <T extends Exception> Result fromError(T error) {
+        return new Error<>(error);
     }
 
     private final boolean success;
@@ -32,8 +41,4 @@ public abstract class Result<T> {
     public boolean isSuccess() {
         return success;
     }
-
-    @Nullable
-    public abstract T getData();
-
 }

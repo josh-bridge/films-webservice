@@ -1,18 +1,19 @@
 package com.jbridgiee.films.server.data.access;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
+import static com.jbridgiee.films.server.data.access.dao.FilmSqlDAO.DIRECTOR;
+import static com.jbridgiee.films.server.data.access.dao.FilmSqlDAO.STARS;
+import static com.jbridgiee.films.server.data.access.dao.FilmSqlDAO.TITLE;
+import static com.jbridgiee.films.server.data.access.dao.FilmSqlDAO.YEAR;
 
-import java.util.List;
-import java.util.TreeSet;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
 import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.access.dao.DAO;
+import com.jbridgiee.films.server.data.access.dao.FilmSqlDAO;
 import com.jbridgiee.films.server.data.result.Result;
 import com.jbridgiee.films.server.data.search.FilmSearchFactory;
 import com.jbridgiee.films.server.data.search.Search;
@@ -32,45 +33,61 @@ public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
     }
 
     @Override
-    public Result<Film> addFilm(Film film) {
+    public Result addFilm(Film film) {
         try {
             filmDAO.create(film);
-            return Result.from(film);
+            return Result.fromUpdate(film);
         } catch (final Exception e) {
-            e.printStackTrace();
+            return Result.fromError(e);
+        }
+    }
+
+    @Override
+    public Result listFilm() {
+        try {
+            return Result.fromDataList(filmDAO.getAll().collect(Collectors.toList()));
+        } catch (final Exception e) {
+            return Result.fromError(e);
+        }
+    }
+
+    @Override
+    public Result searchFilm(String searchTerm) {
+        final Search search = FilmSearchFactory.searchAll(searchTerm, TITLE, DIRECTOR, STARS, YEAR);
+
+        try {
+            return Result.fromDataList(filmDAO.searchItems(search).collect(Collectors.toList()));
+        } catch (final Exception e) {
+            return Result.fromError(e);
+        }
+    }
+
+    @Override
+    public Result getById(int id) {
+        try {
+            return filmDAO.getById(id).map(Result::fromData).orElseGet(Result::emptyResult);
+        } catch (final Exception e) {
+            return Result.fromError(e);
+        }
+    }
+
+    @Override
+    public Result searchFilms(String field, String term) {
+        if (isColumn(field)) {
+            final Search search = FilmSearchFactory.searchField(field.toLowerCase(), term);
+
+            try {
+                return Result.fromDataList(filmDAO.searchItems(search).collect(Collectors.toList()));
+            } catch (final Exception e) {
+                return Result.fromError(e);
+            }
         }
 
-        return Result.emptyResult();
+        return Result.fromError("Could not find column: " + field, new Exception());
     }
 
-    @Override
-    public Result<List<Film>> listFilm() {
-        return Result.fromList(filmDAO.getAll());
-    }
-
-    @Override
-    public Result<List<Film>> searchFilm(String searchTerm) {
-        final List<Search<?>> searches = FilmSearchFactory.searchAll(searchTerm);
-
-        final List<Film> results = Lists.newArrayList();
-        for (final Search<?> search : searches) {
-            results.addAll(filmDAO.searchItems(search));
-        }
-
-        return Result.fromList(removeDuplicates(results));
-    }
-
-    @Override
-    public Result<Film> getById(int id) {
-        return filmDAO.getById(id).map(Result::from).orElseGet(Result::emptyResult);
-    }
-
-    private List<Film> removeDuplicates(List<Film> films) {
-        return films.stream().collect(collectingAndThen(toCollection(this::getUniqueFilms), Lists::newArrayList));
-    }
-
-    private TreeSet<Film> getUniqueFilms() {
-        return new TreeSet<>(comparingInt(Film::getId));
+    private boolean isColumn(String field) {
+        return Arrays.stream(FilmSqlDAO.COLUMNS).anyMatch((column) -> column.equalsIgnoreCase(field));
     }
 
 }
