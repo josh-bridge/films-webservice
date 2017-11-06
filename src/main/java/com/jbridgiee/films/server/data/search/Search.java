@@ -9,11 +9,15 @@ import java.util.List;
  */
 public class Search {
 
+    public static Search create(String term, String... columns) {
+        return new Search(term, columns);
+    }
+
     private final String term;
 
     private final List<String> fields;
 
-    Search(String term, List<String> fields) {
+    private Search(String term, List<String> fields) {
         this.term = term;
         this.fields = fields;
     }

@@ -10,13 +10,45 @@
     <!-- @Controller, @Service, @Configuration, etc. -->
     <context:component-scan base-package="com.jbridgiee.films"/>
 
-    <!-- Enables the Spring MVC @Controller programming model -->
-    <mvc:annotation-driven/>
-
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/jsp/" />
-        <property name="suffix" value=".jsp" />
+    <bean id="contentNegotiator" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <property name="favorParameter" value="true"/>
+        <property name="ignoreAcceptHeader" value="true"/>
+        <property name="defaultContentType" value="application/json"/>
+        <property name="mediaTypes">
+            <map>
+                <entry key="json" value="application/json"/>
+                <entry key="xml" value="application/xml"/>
+                <entry key="text" value="text/plain"/>
+            </map>
+        </property>
     </bean>
+
+    <bean id="gsonBuilder" class="com.google.gson.GsonBuilder"/>
+
+    <!-- Enables the Spring MVC @Controller programming model -->
+    <mvc:annotation-driven content-negotiation-manager="contentNegotiator">
+        <mvc:message-converters>
+
+            <!-- Enables conversion to Json (via Gson) -->
+            <bean class="org.springframework.http.converter.json.GsonHttpMessageConverter">
+                <property name="gson">
+                    <bean class="com.google.gson.Gson" factory-bean="gsonBuilder" factory-method="create"/>
+                </property>
+            </bean>
+
+            <!-- Enables Object conversion to text -->
+            <bean class="org.springframework.http.converter.ObjectToStringHttpMessageConverter">
+                <constructor-arg>
+                    <bean class="org.springframework.context.support.ConversionServiceFactoryBean">
+                        <property name="converters">
+                            <set>
+                                <bean class="com.jbridgiee.films.server.data.FilmToStringConverter"/>
+                            </set>
+                        </property>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
 </beans>

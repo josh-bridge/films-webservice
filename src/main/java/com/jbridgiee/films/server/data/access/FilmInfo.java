@@ -1,7 +1,9 @@
 package com.jbridgiee.films.server.data.access;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.jbridgiee.films.server.data.Film;
-import com.jbridgiee.films.server.data.result.Result;
 
 /**
  *
@@ -9,14 +11,16 @@ import com.jbridgiee.films.server.data.result.Result;
  */
 public interface FilmInfo {
 
-    Result addFilm(Film film);
+    Film addFilm(Film film);
 
-    Result listFilm();
+    Film updateFilm(Film film);
 
-    Result searchFilm(String searchTerm);
+    Optional<Film> getById(int id);
 
-    Result getById(int id);
+    List<Film> listFilm();
 
-    Result searchFilms(String field, String term);
+    List<Film> searchFilm(String searchTerm);
+
+    List<Film> searchFilms(String field, String term);
 
 }

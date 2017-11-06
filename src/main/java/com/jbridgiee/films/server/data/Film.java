@@ -1,14 +1,16 @@
 package com.jbridgiee.films.server.data;
 
+import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  *
  * @author josh.bridge
  */
-public class Film {
+public class Film implements Serializable {
 
     private final int id;
 
@@ -57,15 +59,7 @@ public class Film {
 
     @Override
     public String toString() {
-        return "Film [Id: " + id + "; " +
-                "Title: " + title + "; " +
-                "Year: " + year + "; " +
-                "Director: " + director + "; " +
-                "Stars: " + String.join(", ", stars) + "; " +
-                "Description: \"" + description + "\";]";
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public static boolean equals(Film film, Film film2) {
-        return film != null && film2 != null && EqualsBuilder.reflectionEquals(film, film2);
-    }
 }

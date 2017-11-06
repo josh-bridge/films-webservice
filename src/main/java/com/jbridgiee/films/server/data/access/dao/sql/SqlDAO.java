@@ -1,5 +1,6 @@
-package com.jbridgiee.films.server.data.access.dao;
+package com.jbridgiee.films.server.data.access.dao.sql;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
@@ -7,8 +8,9 @@ import javax.annotation.Nullable;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-import com.jbridgiee.films.server.data.access.dao.sql.SqlStatement;
+import com.jbridgiee.films.server.data.access.dao.DAO;
 
 public abstract class SqlDAO<T> implements DAO<T> {
 
@@ -16,6 +18,10 @@ public abstract class SqlDAO<T> implements DAO<T> {
 
     SqlDAO(BasicDataSource connectionPool) {
         this.connectionPool = connectionPool;
+    }
+
+    int create(SimpleJdbcInsert insert, Map<String, String> values) {
+        return insert.executeAndReturnKey(values).intValue();
     }
 
     @Nullable
@@ -27,7 +33,8 @@ public abstract class SqlDAO<T> implements DAO<T> {
         return getTemplate().query(sql.build(), args, rowMapper).stream();
     }
 
-    private JdbcTemplate getTemplate() {
+    JdbcTemplate getTemplate() {
         return new JdbcTemplate(connectionPool);
     }
+
 }

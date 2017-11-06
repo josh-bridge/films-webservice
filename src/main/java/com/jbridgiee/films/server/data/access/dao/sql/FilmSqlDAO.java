@@ -1,10 +1,12 @@
-package com.jbridgiee.films.server.data.access.dao;
+package com.jbridgiee.films.server.data.access.dao.sql;
 
 import static com.jbridgiee.films.server.data.access.dao.sql.SqlStatement.sql;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,11 +16,12 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.jbridgiee.films.server.data.Film;
-import com.jbridgiee.films.server.data.access.dao.sql.SqlStatement;
 import com.jbridgiee.films.server.data.search.Search;
 
 /**
@@ -30,9 +33,9 @@ public class FilmSqlDAO extends SqlDAO<Film> {
 
     private static final int LOWEST_FILM_ID = 10000;
 
-    public static final String ID = "id";
+    private static final String ID = "id";
 
-    public static final String FILMS = "films";
+    private static final String FILMS = "films";
 
     public static final String TITLE = "title";
 
@@ -42,15 +45,19 @@ public class FilmSqlDAO extends SqlDAO<Film> {
 
     public static final String STARS = "stars";
 
-    public static final String REVIEW = "review";
-
-    public static final String[] COLUMNS = new String[] { ID, TITLE, YEAR, DIRECTOR, STARS, REVIEW };
+    private static final String REVIEW = "review";
 
     private static final String VALUE = "?";
 
-    private static final SqlStatement GET_FILM_BY_ID = sql().selectAll().from(FILMS).where(ID).eq(VALUE);
+    private static final SqlStatement GET_FILM_BY_ID = sql()
+            .selectAll()
+            .from(FILMS)
+            .where(ID)
+            .eq(VALUE);
 
-    private static final SqlStatement GET_ALL_FILMS = sql().selectAll().from(FILMS);
+    private static final SqlStatement GET_ALL_FILMS = sql()
+            .selectAll()
+            .from(FILMS);
 
     @Autowired
     public FilmSqlDAO(BasicDataSource connectionPool) throws IOException {
@@ -58,12 +65,14 @@ public class FilmSqlDAO extends SqlDAO<Film> {
     }
 
     @Override
-    public boolean create(Film item) {
-        throw new NotImplementedException("create(film) has not been implemented");
+    public Film create(Film item) {
+        final int id = create(getInsertFilm(), getParams(item));
+
+        return createNewFilm(item, id);
     }
 
     @Override
-    public boolean update(Film item) {
+    public Film update(Film item) {
         throw new NotImplementedException("update(film) has not been implemented");
     }
 
@@ -85,10 +94,6 @@ public class FilmSqlDAO extends SqlDAO<Film> {
     @Override
     public boolean delete(Film item) {
         throw new NotImplementedException(this.getClass().getName() + ".delete(film) has not been implemented");
-    }
-
-    private SqlStatement searchByField(String field) {
-        return sql().selectAll().from(FILMS).where(field).like(VALUE);
     }
 
     private SqlStatement searchByFields(List<String> fields) {
@@ -119,6 +124,35 @@ public class FilmSqlDAO extends SqlDAO<Film> {
         }
 
         return terms.toArray(new Object[terms.size()]);
+    }
+
+    private Map<String, String> getParams(Film item) {
+        final HashMap<String, String> params = Maps.newHashMap();
+
+        params.put(TITLE, item.getTitle());
+        params.put(YEAR, Integer.toString(item.getYear()));
+        params.put(DIRECTOR, item.getDirector());
+        params.put(STARS, String.join(", ", item.getStars()));
+        params.put(REVIEW, item.getDescription());
+
+        return params;
+    }
+
+    private SimpleJdbcInsert getInsertFilm() {
+        return new SimpleJdbcInsert(getTemplate())
+                .withTableName(FILMS)
+                .usingColumns(TITLE, YEAR, DIRECTOR, STARS, REVIEW)
+                .usingGeneratedKeyColumns(ID);
+    }
+
+    private Film createNewFilm(Film item, int id) {
+        return new Film(
+                id,
+                item.getTitle(),
+                item.getYear(),
+                item.getDirector(),
+                item.getStars(),
+                item.getDescription());
     }
 
     private RowMapper<Film> getFilmRowMapper() {

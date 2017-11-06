@@ -11,15 +11,15 @@ import com.jbridgiee.films.server.data.search.Search;
  */
 public interface DAO<T> {
 
-    Stream<T> getAll() throws Exception;
+    T create(T item) throws Exception;
+
+    T update(T item) throws Exception;
+
+    boolean delete(T item) throws Exception;
 
     Optional<T> getById(int id) throws Exception;
 
-    boolean create(T item) throws Exception;
-
-    boolean update(T item) throws Exception;
-
-    boolean delete(T item) throws Exception;
+    Stream<T> getAll() throws Exception;
 
     Stream<T> searchItems(Search search) throws Exception;
 

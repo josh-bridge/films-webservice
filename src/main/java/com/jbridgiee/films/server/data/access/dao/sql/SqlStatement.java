@@ -6,7 +6,7 @@ package com.jbridgiee.films.server.data.access.dao.sql;
  */
 public class SqlStatement {
 
-    public static SqlStatement sql() {
+    static SqlStatement sql() {
         return new SqlStatement();
     }
 
@@ -16,61 +16,84 @@ public class SqlStatement {
         sql = new StringBuilder();
     }
 
-    public SqlStatement select(String field) {
+    SqlStatement select(String field) {
         sql.append("SELECT ").append(field).append(" ");
         return this;
     }
 
-    public SqlStatement selectAll() {
+    SqlStatement selectAll() {
         sql.append("SELECT * ");
         return this;
     }
 
-    public SqlStatement distinct(String field) {
+    SqlStatement insertInto(String table) {
+        sql.append("INSERT INTO ").append(table).append(" ");
+        return this;
+    }
+
+    SqlStatement columns(String... columns) {
+        commaSeparated(columns);
+        return this;
+    }
+
+    SqlStatement distinct(String field) {
         sql.append("(DISTINCT ").append(field).append(") ");
         return this;
     }
 
-    public SqlStatement from(String table) {
+    SqlStatement from(String table) {
         sql.append("FROM ").append(table).append(" ");
         return this;
     }
 
-    public SqlStatement where(String field) {
+    SqlStatement values(String... values) {
+        sql.append("VALUES ");
+        commaSeparated(values);
+
+        return this;
+    }
+
+    SqlStatement where(String field) {
         sql.append("WHERE ").append(field).append(" ");
         return this;
     }
 
-    public SqlStatement or(String field) {
+    SqlStatement or(String field) {
         sql.append("OR ").append(field).append(" ");
         return this;
     }
 
-    public SqlStatement eq(Object value) {
+    SqlStatement eq(Object value) {
         sql.append("= ").append(value.toString()).append(" ");
         return this;
     }
 
-    public SqlStatement like(String value) {
+    SqlStatement like(String value) {
         sql.append("LIKE ").append(value).append(" ");
         return this;
     }
 
-    public SqlStatement limit(String value) {
+    SqlStatement limit(String value) {
         sql.append("LIMIT ").append(value).append(" ");
         return this;
     }
 
-    public SqlStatement groupBy(String field) {
+    SqlStatement groupBy(String field) {
         sql.append("GROUP BY ").append(field).append(" ");
         return this;
     }
 
-    public SqlStatement limit(int value) {
+    SqlStatement limit(int value) {
         return limit(Integer.toString(value));
     }
 
-    public String build() {
+    String build() {
         return sql.toString().trim();
+    }
+
+    private void commaSeparated(String[] strings) {
+        sql.append("(")
+                .append(String.join(", ", strings))
+                .append(") ");
     }
 }
