@@ -1,14 +1,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- Scans within the base package of the application for @Components to configure as beans -->
-    <!-- @Controller, @Service, @Configuration, etc. -->
-    <context:component-scan base-package="com.jbridgiee.films"/>
+    <context:component-scan base-package="com.jbridgiee.films.server.controller"/>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>
 
     <bean id="contentNegotiator" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
         <property name="favorParameter" value="true"/>
@@ -31,9 +30,9 @@
 
             <!-- Enables conversion to Json (via Gson) -->
             <bean class="org.springframework.http.converter.json.GsonHttpMessageConverter">
-                <property name="gson">
+                <constructor-arg>
                     <bean class="com.google.gson.Gson" factory-bean="gsonBuilder" factory-method="create"/>
-                </property>
+                </constructor-arg>
             </bean>
 
             <!-- Enables Object conversion to text -->
@@ -42,7 +41,7 @@
                     <bean class="org.springframework.context.support.ConversionServiceFactoryBean">
                         <property name="converters">
                             <set>
-                                <bean class="com.jbridgiee.films.server.data.FilmToStringConverter"/>
+                                <ref bean="filmToStringConverter"/>
                             </set>
                         </property>
                     </bean>

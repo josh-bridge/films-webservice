@@ -4,7 +4,7 @@
 *.log
 
 # Package Files #
-# *.jar
+*.jar
 *.war
 *.ear
 *.zip
@@ -17,3 +17,9 @@ hs_err_pid*
 .idea/
 lib/
 target/
+bin/
+
+.classpath
+.project
+*.userlibraries
+*.eml

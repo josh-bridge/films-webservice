@@ -78,13 +78,13 @@ public class SqlStatement {
         return this;
     }
 
+    SqlStatement limit(int value) {
+        return limit(Integer.toString(value));
+    }
+
     SqlStatement groupBy(String field) {
         sql.append("GROUP BY ").append(field).append(" ");
         return this;
-    }
-
-    SqlStatement limit(int value) {
-        return limit(Integer.toString(value));
     }
 
     String build() {

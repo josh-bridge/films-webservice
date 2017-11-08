@@ -17,7 +17,7 @@ import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,7 +28,7 @@ import com.jbridgiee.films.server.data.search.Search;
  *
  * @author josh.bridge
  */
-@Component
+@Repository
 public class FilmSqlDAO extends SqlDAO<Film> {
 
     private static final int LOWEST_FILM_ID = 10000;
@@ -93,7 +93,7 @@ public class FilmSqlDAO extends SqlDAO<Film> {
 
     @Override
     public boolean delete(Film item) {
-        throw new NotImplementedException(this.getClass().getName() + ".delete(film) has not been implemented");
+        throw new NotImplementedException("delete(film) has not been implemented");
     }
 
     private SqlStatement searchByFields(List<String> fields) {
@@ -112,15 +112,15 @@ public class FilmSqlDAO extends SqlDAO<Film> {
         return statement.groupBy(ID);
     }
 
-    private String getSearchTerm(Search search) {
-        return "%" + search.getTerm().trim() + "%";
+    private String getSearchTerm(String search) {
+        return "%" + search.trim() + "%";
     }
 
     private Object[] getSearchTerms(Search search) {
         final List<String> terms = Lists.newArrayList();
 
         for (int i = 0; i < search.getFields().size(); i++) {
-            terms.add(getSearchTerm(search));
+            terms.add(getSearchTerm(search.getTerm()));
         }
 
         return terms.toArray(new Object[terms.size()]);

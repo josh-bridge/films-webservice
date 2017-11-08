@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.jbridgiee.films.server.data.Film;
 import com.jbridgiee.films.server.data.access.dao.DAO;
@@ -23,17 +23,17 @@ import com.jbridgiee.films.server.data.search.Search;
  *
  * @author josh.bridge
  */
-@Component
-public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
+@Service
+public class FilmFacade implements FilmInfo {
 
     private static final Logger LOGGER = Logger.getLogger(FilmFacade.class.getName());
 
     private static final String[] COLUMNS = { TITLE, DIRECTOR, STARS, YEAR };
 
-    private final T filmDAO;
+    private final DAO<Film> filmDAO;
 
     @Autowired
-    public FilmFacade(T filmDAO) {
+    public FilmFacade(DAO<Film> filmDAO) {
         this.filmDAO = filmDAO;
     }
 
@@ -73,7 +73,7 @@ public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
         try {
             return filmDAO.getById(id);
         } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, e, e::getMessage);
+            LOGGER.log(Level.INFO, e, e::getMessage);
             return Optional.empty();
         }
     }
@@ -81,7 +81,7 @@ public class FilmFacade<T extends DAO<Film>> implements FilmInfo {
     @Override
     public List<Film> searchFilms(String field, String term) {
         if (isColumn(field)) {
-            final Search search = Search.create(field.toLowerCase(), term);
+            final Search search = Search.create(term, field.toLowerCase());
 
             try {
                 return filmDAO.searchItems(search).collect(Collectors.toList());

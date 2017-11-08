@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -26,7 +27,11 @@ public abstract class SqlDAO<T> implements DAO<T> {
 
     @Nullable
     T getItem(SqlStatement sql, RowMapper<T> rowMapper, Object... args) {
-        return getTemplate().queryForObject(sql.build(), args, rowMapper);
+        try {
+            return getTemplate().queryForObject(sql.build(), args, rowMapper);
+        } catch (final EmptyResultDataAccessException ignored) {}
+
+        return null;
     }
 
     Stream<T> getItems(SqlStatement sql, RowMapper<T> rowMapper, Object... args) {
