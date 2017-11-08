@@ -18,8 +18,11 @@ hs_err_pid*
 lib/
 target/
 bin/
+*.DS_Store
 
 .classpath
 .project
 *.userlibraries
 *.eml
+
+.ebextensions/*
