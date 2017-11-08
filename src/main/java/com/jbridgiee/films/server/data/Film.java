@@ -1,10 +1,12 @@
 package com.jbridgiee.films.server.data;
 
-import java.io.Serializable;
-import java.util.List;
-
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -12,16 +14,23 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class Film implements Serializable {
 
+    @JacksonXmlProperty(isAttribute = true)
     private final int id;
 
+    @JacksonXmlProperty(isAttribute = true)
     private final String title;
 
+    @JacksonXmlProperty(isAttribute = true)
     private final int year;
 
+    @JacksonXmlProperty(isAttribute = true)
     private final String director;
 
+    @JacksonXmlElementWrapper(localName = "stars")
+    @JacksonXmlProperty(localName = "star")
     private final List<String> stars;
 
+    @JacksonXmlProperty(isAttribute = true)
     private final String description;
 
     public Film(int id, String title, int year, String director, List<String> stars, String description) {

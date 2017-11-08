@@ -1,33 +1,21 @@
 package com.jbridgiee.films.server.controller;
 
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import com.google.common.collect.Lists;
+import com.jbridgiee.films.server.data.Film;
+import com.jbridgiee.films.server.data.access.FilmInfo;
+import com.jbridgiee.films.server.data.web.FilmResource;
+import com.jbridgiee.films.server.data.web.Results;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.jbridgiee.films.server.data.Film;
-import com.jbridgiee.films.server.data.access.FilmInfo;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 
 @RestController
 @RequestMapping("/films")
@@ -46,7 +34,7 @@ public class FilmsController {
 
         filmService.listFilm().forEach(film -> filmResources.add(new FilmResource(film)));
 
-        return ResponseEntity.ok(filmResources);
+        return ResponseEntity.ok(Results.from(filmResources));
     }
 
     @GetMapping("/{id}")
@@ -80,56 +68,25 @@ public class FilmsController {
     public ResponseEntity<?> searchAll(@RequestParam("q") String term) {
         final List<FilmResource> filmResources = Lists.newArrayList();
 
-        filmService.searchFilm(sanitise(term)).forEach(film -> filmResources.add(new FilmResource(film)));
+        filmService.searchFilm(decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
 
-        return ResponseEntity.ok(filmResources);
+        return ResponseEntity.ok(Results.from(filmResources));
     }
 
     @GetMapping("/search/{field}")
     public ResponseEntity<?> searchField(@PathVariable String field, @RequestParam("q") String term) {
         final List<FilmResource> filmResources = Lists.newArrayList();
 
-        filmService.searchFilms(sanitise(field), sanitise(term)).forEach(film -> filmResources.add(new FilmResource(film)));
+        filmService.searchFilms(decode(field), decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
 
-        return ResponseEntity.ok(filmResources);
+        return ResponseEntity.ok(Results.from(filmResources));
     }
 
-    private String sanitise(String input) {
+    private String decode(String input) {
         try {
             return URLDecoder.decode(input, UTF_8).trim();
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException("Unable to decode input", e);
-        }
-    }
-
-    class FilmResource extends Film {
-
-        private final Map<String, Map<String, String>> _links;
-
-        FilmResource(Film film) {
-            super(film.getId(), film.getTitle(), film.getYear(), film.getDirector(), film.getStars(), film.getDescription());
-
-            final Link self = getSelf(film.getId());
-
-            this._links = Maps.newHashMap();
-
-            this._links.put(self.getRel(), getHref(self));
-        }
-
-        public Map<String, Map<String, String>> getLinks() {
-            return _links;
-        }
-
-        private HashMap<String, String> getHref(Link self) {
-            final HashMap<String, String> href = Maps.newHashMap();
-
-            href.put("href", self.getHref());
-
-            return href;
-        }
-
-        private Link getSelf(int id) {
-            return linkTo(methodOn(FilmsController.class).details(id)).withSelfRel();
         }
     }
 }
