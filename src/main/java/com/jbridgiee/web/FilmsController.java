@@ -1,19 +1,15 @@
-package com.jbridgiee.films.server.controller;
+package com.jbridgiee.web;
 
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,9 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.jbridgiee.films.server.data.Film;
-import com.jbridgiee.films.server.data.access.FilmInfo;
+import com.jbridgiee.data.access.FilmInfo;
+import com.jbridgiee.data.model.Film;
+import com.jbridgiee.data.web.FilmResource;
+import com.jbridgiee.data.web.Results;
 
 @RestController
 @RequestMapping("/films")
@@ -46,24 +43,34 @@ public class FilmsController {
 
         filmService.listFilm().forEach(film -> filmResources.add(new FilmResource(film)));
 
-        return ResponseEntity.ok(filmResources);
+        return ResponseEntity.ok(Results.from(filmResources));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> details(@PathVariable int id) {
+    public ResponseEntity<?> details(@PathVariable Long id) {
         return filmService.getById(id)
                 .map(film -> ResponseEntity.ok(new FilmResource(film)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return filmService.getById(id)
+                .map(film -> {
+                    filmService.deleteFilm(film);
+
+                    return ResponseEntity.ok().build();
+                }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<?> add(@RequestBody Film input) {
-        final Film result = filmService.addFilm(input);
+        filmService.addFilm(input);
 
         final URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(result.getId())
+                .buildAndExpand(input.getId())
                 .toUri();
 
         return ResponseEntity.created(location).build();
@@ -71,65 +78,38 @@ public class FilmsController {
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody Film input) {
-        filmService.updateFilm(input);
+        if (filmService.getById(input.getId()).isPresent()) {
+            filmService.updateFilm(input);
+            return ResponseEntity.ok(new FilmResource(input));
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
 
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> searchAll(@RequestParam("q") String term) {
         final List<FilmResource> filmResources = Lists.newArrayList();
 
-        filmService.searchFilm(sanitise(term)).forEach(film -> filmResources.add(new FilmResource(film)));
+        filmService.searchFilm(decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
 
-        return ResponseEntity.ok(filmResources);
+        return ResponseEntity.ok(Results.from(filmResources));
     }
 
     @GetMapping("/search/{field}")
     public ResponseEntity<?> searchField(@PathVariable String field, @RequestParam("q") String term) {
         final List<FilmResource> filmResources = Lists.newArrayList();
 
-        filmService.searchFilms(sanitise(field), sanitise(term)).forEach(film -> filmResources.add(new FilmResource(film)));
+        filmService.searchFilms(decode(field), decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
 
-        return ResponseEntity.ok(filmResources);
+        return ResponseEntity.ok(Results.from(filmResources));
     }
 
-    private String sanitise(String input) {
+    private String decode(String input) {
         try {
             return URLDecoder.decode(input, UTF_8).trim();
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException("Unable to decode input", e);
-        }
-    }
-
-    class FilmResource extends Film {
-
-        private final Map<String, Map<String, String>> _links;
-
-        FilmResource(Film film) {
-            super(film.getId(), film.getTitle(), film.getYear(), film.getDirector(), film.getStars(), film.getDescription());
-
-            final Link self = getSelf(film.getId());
-
-            this._links = Maps.newHashMap();
-
-            this._links.put(self.getRel(), getHref(self));
-        }
-
-        public Map<String, Map<String, String>> getLinks() {
-            return _links;
-        }
-
-        private HashMap<String, String> getHref(Link self) {
-            final HashMap<String, String> href = Maps.newHashMap();
-
-            href.put("href", self.getHref());
-
-            return href;
-        }
-
-        private Link getSelf(int id) {
-            return linkTo(methodOn(FilmsController.class).details(id)).withSelfRel();
         }
     }
 }

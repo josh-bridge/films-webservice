@@ -1,9 +1,9 @@
-package com.jbridgiee.films.server.data.access;
+package com.jbridgiee.data.access;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.jbridgiee.films.server.data.Film;
+import com.jbridgiee.data.model.Film;
 
 /**
  *
@@ -11,11 +11,13 @@ import com.jbridgiee.films.server.data.Film;
  */
 public interface FilmInfo {
 
-    Film addFilm(Film film);
+    void addFilm(Film film);
 
-    Film updateFilm(Film film);
+    void updateFilm(Film film);
 
-    Optional<Film> getById(int id);
+    void deleteFilm(Film film);
+
+    Optional<Film> getById(Long id);
 
     List<Film> listFilm();
 

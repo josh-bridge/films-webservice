@@ -4,4 +4,8 @@
   <runtime>java8</runtime>
   <threadsafe>true</threadsafe>
   <version>1</version>
+
+  <env-variables>
+    <env-var name="DEFAULT_ENCODING" value="UTF-8" />
+  </env-variables>
 </appengine-web-app>

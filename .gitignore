@@ -24,3 +24,7 @@ bin/
 .project
 *.userlibraries
 *.eml
+
+# Deployment descriptors
+*appengine-web.xml
+.ebextensions/
