@@ -1,4 +1,4 @@
-package com.jbridgiee.films.server.controller;
+package com.jbridgiee.web;
 
 import java.util.Collections;
 import java.util.Set;
@@ -9,7 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import com.jbridgiee.films.server.data.Film;
+import com.jbridgiee.data.model.Film;
 
 /**
  *

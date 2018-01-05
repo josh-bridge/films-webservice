@@ -1,4 +1,4 @@
-package com.jbridgiee.films.server.data.search;
+package com.jbridgiee.data.search;
 
 import java.util.Arrays;
 import java.util.List;

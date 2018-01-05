@@ -1,39 +1,52 @@
-package com.jbridgiee.films.server.data;
+package com.jbridgiee.data.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  *
  * @author josh.bridge
  */
+@Entity(name = "films")
 public class Film implements Serializable {
 
-    private final int id;
+    @Id
+    private Long id;
 
-    private final String title;
+    @Index
+    private String title;
 
-    private final int year;
+    private int year;
 
-    private final String director;
+    @Index
+    private String director;
 
-    private final List<String> stars;
+    private String stars;
 
-    private final String description;
+    private String review;
 
-    public Film(int id, String title, int year, String director, List<String> stars, String description) {
+    public Film(Long id, String title, int year, String director, String stars, String review) {
         this.id = id;
         this.title = title;
         this.year = year;
         this.director = director;
         this.stars = stars;
-        this.description = description;
+        this.review = review;
     }
 
-    public int getId() {
+    protected Film() {}
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
         return id;
     }
 
@@ -49,12 +62,12 @@ public class Film implements Serializable {
         return director;
     }
 
-    public List<String> getStars() {
+    public String getStars() {
         return stars;
     }
 
-    public String getDescription() {
-        return description;
+    public String getReview() {
+        return review;
     }
 
     @Override
