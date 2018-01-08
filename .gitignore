@@ -29,3 +29,6 @@ bin/
 .ebextensions/
 
 report/*.synctex.gz
+
+.DS_Store
+._*

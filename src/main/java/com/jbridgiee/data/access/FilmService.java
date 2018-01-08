@@ -1,16 +1,15 @@
 package com.jbridgiee.data.access;
 
+import com.jbridgiee.data.access.dao.FilmDatastoreDAO;
+import com.jbridgiee.data.model.Film;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.jbridgiee.data.access.dao.FilmDatastoreDAO;
-import com.jbridgiee.data.model.Film;
 
 /**
  *
@@ -35,7 +34,7 @@ public class FilmService implements FilmInfo {
             filmDAO.create(film);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e, e::getMessage);
-            throw new InternalError(e);
+            throw new InternalError();
         }
     }
 
@@ -45,7 +44,7 @@ public class FilmService implements FilmInfo {
             return filmDAO.getAll().collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e, e::getMessage);
-            throw new InternalError(e);
+            throw new InternalError();
         }
     }
 
@@ -54,7 +53,7 @@ public class FilmService implements FilmInfo {
         try {
             return filmDAO.searchItems(searchTerm).collect(Collectors.toList());
         } catch (final Exception e) {
-            throw new InternalError(e);
+            throw new InternalError();
         }
     }
 
@@ -64,7 +63,7 @@ public class FilmService implements FilmInfo {
             return filmDAO.getById(id);
         } catch (final Exception e) {
             LOGGER.log(Level.INFO, e, e::getMessage);
-            throw new InternalError(e);
+            throw new InternalError();
         }
     }
 
@@ -74,7 +73,7 @@ public class FilmService implements FilmInfo {
             filmDAO.create(film);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e, e::getMessage);
-            throw new InternalError(e);
+            throw new InternalError();
         }
     }
 
@@ -84,7 +83,7 @@ public class FilmService implements FilmInfo {
             filmDAO.delete(film);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e, e::getMessage);
-            throw new InternalError(e);
+            throw new InternalError();
         }
     }
 
