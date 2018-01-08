@@ -1,5 +1,6 @@
 package com.jbridgiee.data.access.dao;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -9,32 +10,31 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.jbridgiee.data.model.Film;
-import com.jbridgiee.data.search.Search;
 
 /**
  *
  * @author josh.bridge
  */
 @Repository
-public class FilmObjectifyDAO {
+public class FilmDatastoreDAO {
 
-    public FilmObjectifyDAO() {
+    public FilmDatastoreDAO() {
         ObjectifyService.register(Film.class);
     }
 
-    public void create(Film item) throws Exception {
+    public void create(Film item) {
         getConnection().save().entities(item).now();
     }
 
-    public void update(Film item) throws Exception {
-        create(item);
-    }
-
-    public void delete(Film item) throws Exception {
+    public void delete(Film item) {
         getConnection().delete().entities(item).now();
     }
 
-    public Optional<Film> getById(Long id) throws Exception {
+    public Stream<Film> getAll() {
+        return getConnection().load().type(Film.class).order("title").list().stream();
+    }
+
+    public Optional<Film> getById(Long id) {
         if (id == null) {
             return Optional.empty();
         }
@@ -42,12 +42,11 @@ public class FilmObjectifyDAO {
         return Optional.ofNullable(getConnection().load().key(Key.create(Film.class, id)).now());
     }
 
-    public Stream<Film> getAll() throws Exception {
-        return getConnection().load().type(Film.class).list().stream();
-    }
+    public Stream<Film> searchItems(String searchTerm) {
+        final List<Film> films = getConnection().load().type(Film.class).list();
 
-    public Stream<Film> searchItems(Search search) throws Exception {
-        return getConnection().load().type(Film.class).filter("title =", search.getFields().get(0)).list().stream();
+        return films.stream()
+                .filter(film -> film.getTitle().toLowerCase().contains(searchTerm.toLowerCase()));
     }
 
     private Objectify getConnection() {

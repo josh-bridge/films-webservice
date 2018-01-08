@@ -27,3 +27,5 @@ bin/
 # Deployment descriptors
 *appengine-web.xml
 .ebextensions/
+
+report/*.synctex.gz

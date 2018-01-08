@@ -23,8 +23,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.google.common.collect.Lists;
 import com.jbridgiee.data.access.FilmInfo;
 import com.jbridgiee.data.model.Film;
-import com.jbridgiee.data.web.FilmResource;
-import com.jbridgiee.data.web.Results;
+import com.jbridgiee.web.response.FilmResource;
+import com.jbridgiee.web.response.Results;
 
 @RestController
 @RequestMapping("/films")
@@ -46,23 +46,6 @@ public class FilmsController {
         return ResponseEntity.ok(Results.from(filmResources));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> details(@PathVariable Long id) {
-        return filmService.getById(id)
-                .map(film -> ResponseEntity.ok(new FilmResource(film)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        return filmService.getById(id)
-                .map(film -> {
-                    filmService.deleteFilm(film);
-
-                    return ResponseEntity.ok().build();
-                }).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @PostMapping
     public ResponseEntity<?> add(@RequestBody Film input) {
         filmService.addFilm(input);
@@ -78,29 +61,51 @@ public class FilmsController {
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody Film input) {
-        if (filmService.getById(input.getId()).isPresent()) {
+        if (!filmService.getById(input.getId()).isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        filmService.updateFilm(input);
+
+        return ResponseEntity.ok(new FilmResource(input));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> details(@PathVariable Long id) {
+        return filmService.getById(id)
+                .map(film -> ResponseEntity.ok(new FilmResource(film)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateDetails(@PathVariable Long id, @RequestBody Film input) {
+        if (filmService.getById(id).isPresent() && (input.getId() == null || input.getId().equals(id))) {
+            if (input.getId() == null) {
+                input.setId(id);
+            }
+
             filmService.updateFilm(input);
+
             return ResponseEntity.ok(new FilmResource(input));
         } else {
             return ResponseEntity.badRequest().build();
         }
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return filmService.getById(id)
+                .map(film -> {
+                    filmService.deleteFilm(film);
+
+                    return ResponseEntity.ok().build();
+                }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchAll(@RequestParam("q") String term) {
+    public ResponseEntity<?> search(@RequestParam("title") String term) {
         final List<FilmResource> filmResources = Lists.newArrayList();
 
-        filmService.searchFilm(decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
-
-        return ResponseEntity.ok(Results.from(filmResources));
-    }
-
-    @GetMapping("/search/{field}")
-    public ResponseEntity<?> searchField(@PathVariable String field, @RequestParam("q") String term) {
-        final List<FilmResource> filmResources = Lists.newArrayList();
-
-        filmService.searchFilms(decode(field), decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
+        filmService.searchFilms(decode(term)).forEach(film -> filmResources.add(new FilmResource(film)));
 
         return ResponseEntity.ok(Results.from(filmResources));
     }

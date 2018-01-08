@@ -1,4 +1,4 @@
-package com.jbridgiee.web;
+package com.jbridgiee.web.response.converters;
 
 import java.util.Collections;
 import java.util.Set;
@@ -9,21 +9,21 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import com.jbridgiee.data.model.Film;
+import com.jbridgiee.web.response.Results;
 
 /**
  *
  * @author josh.bridge
  */
 @Component
-public class FilmToStringConverter implements ConditionalGenericConverter {
+public class ResultsToStringConverter implements ConditionalGenericConverter {
 
     public Set<ConvertiblePair> getConvertibleTypes() {
-        return Collections.singleton(new ConvertiblePair(Film.class, String.class));
+        return Collections.singleton(new ConvertiblePair(Results.class, String.class));
     }
 
     public boolean matches(@NonNull TypeDescriptor sourceType, @NonNull TypeDescriptor targetType) {
-        return sourceType.getObjectType().equals(Film.class);
+        return sourceType.getObjectType().equals(Results.class);
     }
 
     @Nullable

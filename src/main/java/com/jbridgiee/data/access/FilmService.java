@@ -9,9 +9,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jbridgiee.data.access.dao.FilmObjectifyDAO;
+import com.jbridgiee.data.access.dao.FilmDatastoreDAO;
 import com.jbridgiee.data.model.Film;
-import com.jbridgiee.data.search.Search;
 
 /**
  *
@@ -22,10 +21,10 @@ public class FilmService implements FilmInfo {
 
     private static final Logger LOGGER = Logger.getLogger(FilmService.class.getName());
 
-    private final FilmObjectifyDAO filmDAO;
+    private final FilmDatastoreDAO filmDAO;
 
     @Autowired
-    public FilmService(FilmObjectifyDAO filmDAO) {
+    public FilmService(FilmDatastoreDAO filmDAO) {
         this.filmDAO = filmDAO;
     }
 
@@ -51,11 +50,9 @@ public class FilmService implements FilmInfo {
     }
 
     @Override
-    public List<Film> searchFilm(String searchTerm) {
-        final Search search = Search.create(searchTerm, "");
-
+    public List<Film> searchFilms(String searchTerm) {
         try {
-            return filmDAO.searchItems(search).collect(Collectors.toList());
+            return filmDAO.searchItems(searchTerm).collect(Collectors.toList());
         } catch (final Exception e) {
             throw new InternalError(e);
         }
@@ -69,22 +66,6 @@ public class FilmService implements FilmInfo {
             LOGGER.log(Level.INFO, e, e::getMessage);
             throw new InternalError(e);
         }
-    }
-
-    @Override
-    public List<Film> searchFilms(String field, String term) {
-        if (isColumn(field)) {
-            final Search search = Search.create(term, field.toLowerCase());
-
-            try {
-                return filmDAO.searchItems(search).collect(Collectors.toList());
-            } catch (final Exception e) {
-                LOGGER.log(Level.SEVERE, e, e::getMessage);
-                throw new InternalError(e);
-            }
-        }
-
-        return null;
     }
 
     @Override
@@ -105,10 +86,6 @@ public class FilmService implements FilmInfo {
             LOGGER.log(Level.SEVERE, e, e::getMessage);
             throw new InternalError(e);
         }
-    }
-
-    private boolean isColumn(String field) {
-        return false;
     }
 
 }

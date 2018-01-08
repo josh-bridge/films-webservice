@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -17,6 +18,7 @@ import com.googlecode.objectify.annotation.Index;
 public class Film implements Serializable {
 
     @Id
+    @JacksonXmlProperty(isAttribute = true)
     private Long id;
 
     @Index

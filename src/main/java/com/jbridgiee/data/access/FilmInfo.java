@@ -21,8 +21,6 @@ public interface FilmInfo {
 
     List<Film> listFilm();
 
-    List<Film> searchFilm(String searchTerm);
-
-    List<Film> searchFilms(String field, String term);
+    List<Film> searchFilms(String searchTerm);
 
 }

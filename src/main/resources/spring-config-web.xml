@@ -9,6 +9,8 @@
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>
 
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+
     <bean id="contentNegotiator" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
         <property name="favorParameter" value="true"/>
         <property name="ignoreAcceptHeader" value="true"/>
@@ -42,6 +44,7 @@
                         <property name="converters">
                             <set>
                                 <ref bean="filmToStringConverter"/>
+                                <ref bean="resultsToStringConverter"/>
                             </set>
                         </property>
                     </bean>
