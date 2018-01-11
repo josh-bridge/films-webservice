@@ -1,4 +1,4 @@
-package com.jbridgiee.data.model;
+package com.jbridgiee.model;
 
 import java.io.Serializable;
 
@@ -11,6 +11,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 /**
+ * POJO for film data
  *
  * @author josh.bridge
  */
@@ -42,6 +43,9 @@ public class Film implements Serializable {
         this.review = review;
     }
 
+    /**
+     * Constructor required for Objectify
+     */
     protected Film() {}
 
     public void setId(Long id) {

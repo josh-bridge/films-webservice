@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
+ * Simple controller for the web front end
  *
  * @author josh.bridge
  */
@@ -14,7 +15,7 @@ public class HomeController {
 
     @GetMapping
     public String index() {
-        return "WEB-INF/jsp/index.jsp";
+        return "/static/html/index.html";
     }
 
 }

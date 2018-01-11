@@ -1,8 +1,5 @@
 package com.jbridgiee.web.response;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,29 +10,32 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.collect.Maps;
-import com.jbridgiee.data.model.Film;
-import com.jbridgiee.web.FilmsController;
+import com.jbridgiee.model.Film;
 
+/**
+ * A web resource version of the plain Film object
+ *
+ * @author josh.bridge
+ */
 @JacksonXmlRootElement(localName = "film")
 public class FilmResource extends Film {
-
-    private static Link getSelf(Long id) {
-        return linkTo(methodOn(FilmsController.class).details(id)).withSelfRel();
-    }
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(isAttribute = true)
     private final Map<String, FilmLink> links;
 
-    public FilmResource(Film film) {
+    public FilmResource(Film film, Link... links) {
         super(film.getId(), film.getTitle(), film.getYear(), film.getDirector(), film.getStars(), film.getReview());
 
         this.links = Maps.newHashMap();
-
-        final Link self = getSelf(film.getId());
-        this.links.put(self.getRel(), new FilmLink(self.getHref()));
+        for (final Link link : links) {
+            this.links.put(link.getRel(), new FilmLink(link.getHref()));
+        }
     }
 
+    /**
+     * A custom representation of a URI for correct layout after FilmResource serialization
+     */
     public class FilmLink {
 
         @JacksonXmlProperty(isAttribute = true)

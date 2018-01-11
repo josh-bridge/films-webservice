@@ -9,9 +9,20 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
+/**
+ * Container for web results (of more than one resource)
+ *
+ * @author josh.bridge
+ */
 @JacksonXmlRootElement(localName = "results")
 public class Results {
 
+    /**
+     * Static factory for web results
+     *
+     * @param results the list of results
+     * @return the new results object
+     */
     public static Results from(List<FilmResource> results) {
         return new Results(results);
     }
@@ -22,10 +33,6 @@ public class Results {
 
     private Results(List<FilmResource> results) {
         this.results = results;
-    }
-
-    public List<FilmResource> getResults() {
-        return results;
     }
 
     @Override

@@ -5,12 +5,20 @@
                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <!-- Scans within the base package of the application for @Components to configure as beans -->
+    <!-- @Controller, @Service, @Repository, etc. -->
     <context:component-scan base-package="com.jbridgiee.web"/>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>
+    <!-- Allows rendering of static resources from a controller -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>
 
+    <!-- Map imported jars (e.g. JQuery) to a url -->
     <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
 
+    <!-- Map static webapp resources to a url -->
+    <mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
+
+    <!-- Handles the web parameter for response formats (e.g. ?format=json) -->
     <bean id="contentNegotiator" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
         <property name="favorParameter" value="true"/>
         <property name="ignoreAcceptHeader" value="true"/>
@@ -24,6 +32,7 @@
         </property>
     </bean>
 
+    <!-- Create a new GSON builder to allow GSON to be used for JSON serialisation-->
     <bean id="gsonBuilder" class="com.google.gson.GsonBuilder"/>
 
     <!-- Enables the Spring MVC @Controller programming model -->
@@ -37,13 +46,13 @@
                 </constructor-arg>
             </bean>
 
-            <!-- Enables Object conversion to text -->
+            <!-- Enables Object conversion to text - using custom converters -->
             <bean class="org.springframework.http.converter.ObjectToStringHttpMessageConverter">
                 <constructor-arg>
                     <bean class="org.springframework.context.support.ConversionServiceFactoryBean">
                         <property name="converters">
                             <set>
-                                <ref bean="filmToStringConverter"/>
+                                <ref bean="filmResourceToStringConverter"/>
                                 <ref bean="resultsToStringConverter"/>
                             </set>
                         </property>

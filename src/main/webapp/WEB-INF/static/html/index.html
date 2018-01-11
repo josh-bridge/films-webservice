@@ -1,9 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
     <script src="webjars/jquery/3.2.1/jquery.min.js"></script>
     <title>Film Server</title>
+    <meta charset="UTF-8">
     <style type="text/css">
         body {
             margin: 0;
@@ -110,6 +110,7 @@
     </style>
     <script type="text/javascript">
 
+        // Create table rows with supplied film data
         function refreshTableWithFilms(films) {
             const filmTable = $("#filmTable");
             var rows = [];
@@ -127,7 +128,9 @@
                     "<td>" + film.stars + "</td>" +
                     "<td>" + getReview(film.review) + "</td>" +
                     "<td class='control'>" +
-                    "<a href='" + film.links.self.href + "'>View</a> " +
+                    "<a href='" + film.links.self.href + "'>JSON</a> " +
+                    "<a href='" + film.links.self.href + "?format=xml'>XML</a> " +
+                    "<a href='" + film.links.self.href + "?format=text'>TEXT</a> " +
                     "<a href='#' class='editFilmLink' filmId='" + film.id + "' filmlink='" + film.links.self.href + "'>Edit</a> " +
                     "<a href='#' class='deleteFilmLink' filmlink='" + film.links.self.href + "'>Delete</a>" +
                     "</td></tr>");
@@ -136,12 +139,14 @@
             filmTable.append(rows);
         }
 
+        // Refresh the film table with a fresh call to the api
         function refreshAllFilms() {
             $.getJSON("films", function(data) {
                 refreshTableWithFilms(data["results"]);
             });
         }
 
+        // Using a supplied url, search the api for a supplied term
         function searchForFilms(url, method, term) {
             $.ajax({
                 url: url,
@@ -156,6 +161,7 @@
             });
         }
 
+        // Delete the film resource at a supplied url by sending an HTTP DELETE request
         function deleteFilm(url) {
             $.ajax({
                 url: url,
@@ -166,6 +172,7 @@
             });
         }
 
+        // Add the edit film form to the dom, with supplied film data
         function setEditFilmFormValues(film) {
             if (film == null) {
                 alert("Not a valid film!");
@@ -174,7 +181,7 @@
 
             var editFilmForm = $("#editFilmForm");
 
-            editFilmForm.attr("action", "films/"+film.id);
+            editFilmForm.attr("action", "films/" + film.id);
             $(editFilmForm.find(":input[name='title']")[0]).val(film.title);
             $(editFilmForm.find(":input[name='year']")[0]).val(film.year);
             $(editFilmForm.find(":input[name='director']")[0]).val(film.director);
@@ -185,12 +192,14 @@
             $("#createFilmForm").css("display", "none");
         }
 
+        // Set up the edit film form with the data from the api
         function populateEditFilmForm(filmId) {
             $.getJSON("films/" + filmId, function(data) {
                 setEditFilmFormValues(data);
             });
         }
 
+        // Send a supplied form's data as a JSON string
         function sendFormAsJson(form, method, onSuccess) {
             $.ajax({
                 url: form.attr("action"),
@@ -207,6 +216,7 @@
             });
         }
 
+        // Remove all values from the text inputs in a supplied form
         function clearForm(form) {
             var clearAll = function(key, item) {
                 $(item).val("");
@@ -216,6 +226,7 @@
             form.find("textarea").each(clearAll);
         }
 
+        // Set up the add film form submission handling
         function setupFilmForm() {
             var createForm = $("#createFilmForm");
             createForm.submit(function(ev) {
@@ -229,13 +240,7 @@
             });
         }
 
-        function clearEditForm() {
-            var editFilmForm = $("#editFilmForm");
-            clearForm(editFilmForm);
-            editFilmForm.css("display", "none");
-            $("#createFilmForm").css("display", "block")
-        }
-
+        // Set up the edit form submission handling
         function setupEditFilmForm() {
             var editFilmForm = $("#editFilmForm");
             editFilmForm.submit(function(ev) {
@@ -250,6 +255,15 @@
             });
         }
 
+        // remove the edit form from the DOM and clear the values inside
+        function clearEditForm() {
+            var editFilmForm = $("#editFilmForm");
+            clearForm(editFilmForm);
+            editFilmForm.css("display", "none");
+            $("#createFilmForm").css("display", "block")
+        }
+
+        // Set up the search form submission handling
         function setupSearchForm() {
             var searchForm = $("#searchForm");
             searchForm.submit(function(ev) {
@@ -272,6 +286,7 @@
             return returnArray;
         }
 
+        // Shorten review text to 100 chars, and add an ellipsis
         function getReview(review) {
             if (review == null) {
                 return "";
@@ -291,7 +306,7 @@
     <div id="allFilms">
         <div id="allFilmsTitleContainer">
             <h2 id="allFilmsTitle">All Films</h2>
-            <span class="bullet">•</span>
+            <span class="bullet">&bullet;</span>
             <a id="refreshAllFilmsButton" href="#" onclick="refreshAllFilms()">Refresh</a>
             <form action="films/search" method="get" id="searchForm">
                 <input type="submit" name="searchSubmit" id="searchSubmit" value="Search"/>
@@ -323,7 +338,6 @@
         </form>
 
         <form id="editFilmForm" action="films" method="post">
-            <%--<input type="hidden" name="id" value="">--%>
             <table id="editFilmTable" class="filmTable">
                 <tr>
                     <td><input id='editTitleInput' name='title' class='filmInput' type='text' placeholder='Title'/></td>
@@ -348,18 +362,23 @@
     });
 
     var body = $("body");
+
+    // When delete film link is clicked
     body.on("click", ".deleteFilmLink", function() {
         deleteFilm($(this).attr("filmLink"));
     });
 
+    // When edit film link is clicked
     body.on("click", ".editFilmLink", function() {
         populateEditFilmForm($(this).attr("filmId"));
     });
 
+    // When the cancel button is clicked on the edit film form
     body.on("click", "#cancelEditForm", function() {
         clearEditForm();
     });
 
+    // Run form setup methods
     $(function () {
         setupFilmForm();
 

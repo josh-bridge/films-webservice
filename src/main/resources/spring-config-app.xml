@@ -5,7 +5,7 @@
                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Scans within the base package of the application for @Components to configure as beans -->
-    <!-- @Controller, @Service, @Configuration, etc. -->
-    <context:component-scan base-package="com.jbridgiee.data"/>
+    <!-- @Controller, @Service, @Repository, etc. -->
+    <context:component-scan base-package="com.jbridgiee.model"/>
 
 </beans>
